@@ -4,11 +4,11 @@
 
 import dynamic from 'next/dynamic';
 import * as THREE from 'three';
-import { MatrixProps } from '../data/props';
+import { GraphData } from '../data/types';
 
 const ForceGraph3D = dynamic(() => import('react-force-graph-3d'), { ssr: false });
 
-export default function Matrix({ nodes, links }: MatrixProps) {
+export default function Matrix({ nodes, links }: GraphData) {
   const nodeThreeObject = () => {
     const geometry = new THREE.SphereGeometry(1, 24, 24);
     const material = new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: false });
@@ -31,6 +31,7 @@ export default function Matrix({ nodes, links }: MatrixProps) {
         nodeRelSize={1}
         enableNodeDrag={false}
         showNavInfo={false}
+        cooldownTicks={0}
       />
     </div>
   );

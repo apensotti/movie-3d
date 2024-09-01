@@ -2,10 +2,12 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "bake": "node data/bakeSimulation.js",
     "lint": "next lint"
   },
   "dependencies": {
@@ -13,6 +15,7 @@
     "@react-three/fiber": "^8.17.6",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "d3-force": "^3.0.0",
     "lucide-react": "^0.437.0",
     "next": "14.2.7",
     "react": "^18",
@@ -23,6 +26,7 @@
     "three": "^0.168.0"
   },
   "devDependencies": {
+    "@types/d3-force": "^3.0.10",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
