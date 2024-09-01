@@ -11,11 +11,25 @@ export interface Node {
 }
 
 export interface Link {
-  source: string | number;
-  target: string | number;
+  source: string | number | undefined;
+  target: string | number | undefined;
 }
 
 export interface GraphData {
   nodes: Node[];
   links: Link[];
+}
+
+export interface NodeObject {
+  id?: string | number;
+  x?: number;
+  y?: number;
+  z?: number;
+  vx?: number;
+  vy?: number;
+  vz?: number;
+  fx?: number;
+  fy?: number;
+  fz?: number;
+  [others: string]: any; // Allow additional properties
 }
