@@ -31,7 +31,8 @@ export default function Matrix({ nodes, links }: GraphData) {
         nodeRelSize={1}
         enableNodeDrag={false}
         showNavInfo={false}
-        cooldownTicks={0}
+        warmupTicks={23}
+        cooldownTicks={10}
       />
     </div>
   );
