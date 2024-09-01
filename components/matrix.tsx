@@ -29,7 +29,6 @@ export default function Matrix({ nodes, links }: MatrixProps) {
         nodeThreeObject={nodeThreeObject}
         linkOpacity={0.01}
         nodeRelSize={1}
-        d3AlphaDecay={.01}
         enableNodeDrag={false}
         showNavInfo={false}
       />
