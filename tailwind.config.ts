@@ -14,7 +14,7 @@ const config: Config = {
   		},
 		fontSize: {
   		'2xs': '0.675rem',
-  		'3xs': '0.5rem'
+  		'3xs': '0.6rem'
 		},
   		colors: {
   			background: 'hsl(var(--background))',

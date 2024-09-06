@@ -16,14 +16,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             type={type}
             className={cn(
-              "flex h-8 w-full rounded-md border border-input bg-white px-3 py-1 text-2xs text-slate-950 shadow-sm transition-colors file:border-0 file:bg-white file:text-sm file:font-medium placeholder:text-slate-950 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+              "flex h-8 w-full rounded-md border-input bg-neutral-800 px-3 py-1 text-2xs text-neutral-50 shadow-sm transition-colors file:border-0 file:bg-white file:text-sm file:font-medium placeholder:text-neutral-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
               className
             )}
             ref={ref}
             {...props}
           />
         </div>    
-        <BsArrowUpCircleFill className="text-3xl hover:opacity-80 translate-y-0.5" />
+        <BsArrowUpCircleFill className="text-3xl hover:opacity-80 translate-y-0.5 text-neutral-600" />
       </div>
     )
   }
