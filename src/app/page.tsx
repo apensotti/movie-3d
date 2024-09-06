@@ -27,7 +27,7 @@ export default function Home() {
   useEffect(() => {
     const fetchMovies = async () => {
         const promises = ids.map(async (id) => {
-            const response = await fetch(`http://www.omdbapi.com/?i=${id}&plot=full&apikey=f523276c`)
+            const response = await fetch(`https://www.omdbapi.com/?i=${id}&plot=full&apikey=f523276c`)
             const data = await response.json()
             return data
         })
