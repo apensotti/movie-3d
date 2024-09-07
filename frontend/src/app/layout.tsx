@@ -21,8 +21,8 @@ export default function RootLayout({
           <div style={{ position: "relative", width: "100px", height: "100px" }}>
             <img
               src='/wizardlogo2xwhite.png'
-              width={100}
-              height={100}
+              width={80}
+              height={80}
               alt='logo'
               style={{
                 position: "absolute",
@@ -35,8 +35,8 @@ export default function RootLayout({
             />
             <img
               src='/wizardlogo2x.png'
-              width={100}
-              height={100}
+              width={80}
+              height={80}
               alt='logo'
               style={{ position: "absolute", top: 0, left: 0 }}
             />

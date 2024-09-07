@@ -1,0 +1,36 @@
+# Stage 1: Build the React app
+FROM node:16-alpine AS builder
+
+# Set the working directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json (if using npm) or yarn.lock (if using yarn)
+COPY package.json package-lock.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the Next.js app
+RUN npm run build
+
+# Stage 2: Serve the app with a Node.js server
+FROM node:16-alpine
+
+WORKDIR /app
+
+# Install a simple server (or use next start)
+RUN npm install -g serve
+
+# Copy the built app from the builder stage
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./
+
+# Expose the port
+EXPOSE 3000
+
+# Start the server
+CMD ["serve", "-s", ".next", "-l", "3000"]

@@ -2,7 +2,7 @@ import * as React from "react"
 import { HiArrowCircleUp } from 'react-icons/hi';
 import { Button } from "./button";
 
-import { cn } from "@/lib/utils"
+import { cn } from "../../lib/utils"
 import { BsArrowUpCircleFill } from "react-icons/bs";
 
 export interface InputProps
@@ -11,7 +11,7 @@ export interface InputProps
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => {
     return (
-      <div className="flex justify-between gap-1 scale-150">
+      <div className="flex justify-between gap-1">
         <div className="w-full align-middle">
           <input
             type={type}

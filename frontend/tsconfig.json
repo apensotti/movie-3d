@@ -18,9 +18,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./frontend/src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/layout.tsx", "src/app/page.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "frontend/src/app/layout.tsx", "frontend/src/app/page.tsx"],
   "exclude": ["node_modules"]
 }
