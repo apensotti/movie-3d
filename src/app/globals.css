@@ -100,4 +100,9 @@ body {
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
 }
+.fade-on-hover:hover {
+  opacity: 0; /* Fade out the top image */
 }
+
+}
+

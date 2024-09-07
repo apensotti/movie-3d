@@ -11,7 +11,7 @@ export interface InputProps
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => {
     return (
-      <div className="flex justify-between gap-1">
+      <div className="flex justify-between gap-1 scale-150">
         <div className="w-full align-middle">
           <input
             type={type}

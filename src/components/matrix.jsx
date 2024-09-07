@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from 'next/dynamic';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
 import { Input } from './ui/input';
@@ -9,8 +9,9 @@ import Movies from './movies';
 
 const ForceGraph3D = dynamic(() => import('react-force-graph-3d'), { ssr: false });
 
-export default function Matrix({ nodes, links, movies }) {
+export default function Matrix({ nodes, links }) {
   const labelRendererRef = useRef(null);
+  const [loading, setLoading] = useState(true); // Loading state for initial load
 
   useEffect(() => {
     // Initialize the CSS2DRenderer on the client side
@@ -21,8 +22,6 @@ export default function Matrix({ nodes, links, movies }) {
     labelRenderer.domElement.style.pointerEvents = 'none';
     labelRendererRef.current = labelRenderer;
   }, []);
-
-  
 
   const nodeThreeObject = () => {
     const geometry = new THREE.SphereGeometry(1, 24, 24);
@@ -56,35 +55,30 @@ export default function Matrix({ nodes, links, movies }) {
   };
 
   return (
-    <div className="relative w-screen h-screen">
-      {/* Conditionally render ForceGraph3D only when the renderer is set */}
-      { labelRendererRef.current && (
-        <ForceGraph3D
-          graphData={{ nodes, links }}
-          backgroundColor="#0a0a0a"
-          nodeThreeObject={nodeThreeObject}
-          linkOpacity={0.02}
-          nodeRelSize={1}
-          enableNodeDrag={false}
-          showNavInfo={false}
-          warmupTicks={23}
-          cooldownTicks={10}
-          onNodeHover={onNodeHover} // Use onNodeHover callback
-          extraRenderers={[labelRendererRef.current]} // Attach CSS2DRenderer to render HTML labels
-        />)
-      }
-
-      {/* Tailwind CSS Input centered at the bottom */}
-      <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 w-full max-w-xs pb-2">
-        <Input
-          type="text"
-          className="w-full rounded-full align-middle"
-          placeholder="Message MovieGPT"
-        />
-      </div>
-      <div className='absolute bottom-3 right-20 transform w-full max-w-xs pb-2'>
-        <Movies movies={movies}/>
-      </div>
-    </div>
+    <>
+      {labelRendererRef.current && (
+        <>
+          <ForceGraph3D
+            graphData={{ nodes, links }}
+            backgroundColor="#0a0a0a"
+            nodeThreeObject={nodeThreeObject}
+            linkOpacity={0.02}
+            nodeRelSize={1}
+            enableNodeDrag={false}
+            showNavInfo={false}
+            warmupTicks={23}
+            cooldownTicks={10} // Number of ticks before the engine stops after initial load
+            onNodeHover={onNodeHover}
+            extraRenderers={[labelRendererRef.current]}
+            onEngineStop={() => setLoading(false)} // Stop loading after the initial simulation
+          />
+          {loading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black z-10">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-white"></div>
+            </div>
+          )}
+        </>
+      )}
+      </>
   );
 }

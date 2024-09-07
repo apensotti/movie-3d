@@ -6,6 +6,8 @@ import Matrix from '../components/matrix';
 import { useEffect, useState } from "react";
 import { GraphData } from "@/data/types";
 import { omdb } from '@/data/types';
+import Movies from '@/components/movies';
+import {Input} from '@/components/ui/input';
 
 
 export default function Home() {
@@ -39,7 +41,19 @@ export default function Home() {
 
   return (
     <>
-      <Matrix nodes={data.nodes} links={data.links} movies={movies}/>
+      <div className="relative w-screen h-screen overflow-hidden">
+        <Matrix nodes={data.nodes} links={data.links}/>     
+        <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 w-full max-w-xs pb-2 z-50">
+          <Input
+            type="text"
+            className="w-full rounded-full align-middle"
+            placeholder="Message MovieGPT"
+          />
+        </div>
+        <div className='absolute bottom-28 right-44 transform w-full max-w-xs pb-2 z-50'>
+          <Movies movies={movies} />
+        </div>
+      </div>
     </>
   );
 }
