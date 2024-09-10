@@ -6,11 +6,12 @@ import Draggable from 'react-draggable';
 
 interface MoviesProps {
     movies: omdb[]
+    isVisible: boolean
+    setIsVisible: (isVisible: boolean) => void
 }
 
-const Movies = ({ movies }: MoviesProps) => {
-    const [isVisible, setIsVisible] = useState(true ); // State to toggle visibility
-
+const Movies = ({ movies, isVisible, setIsVisible }: MoviesProps) => {
+    
     // Function to toggle visibility
     const toggleVisibility = () => {
         setIsVisible(!isVisible);
@@ -32,7 +33,7 @@ const Movies = ({ movies }: MoviesProps) => {
                     {isVisible ? <FiChevronDown size={24} className='-translate-y-3'/> : <FiChevronUp size={24} className='-translate-y-3'/>}
                 </button>
                 <div className='overflow-y-scroll w-full h-full no-scrollbar z-30'>
-                    {movies.map((movie) => {
+                    {isVisible && movies.map((movie) => {
                         return (
                             <div key={movie.imdbID} className='flex items-center justify-between pb-5 pt-5 gap-5 shadow-lg px-2 hover:bg-neutral-900 hover:rounded-2xl z-50'>
                                 <div className='flex flex-row gap-2'>
