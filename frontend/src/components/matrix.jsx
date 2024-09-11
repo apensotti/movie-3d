@@ -4,13 +4,15 @@ import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
+import { useRouter } from 'next/router'; // Import Next.js router
 import { Input } from './ui/input';
 import Movies from './movies';
-
+import Router from 'next/router';
 const ForceGraph3D = dynamic(() => import('react-force-graph-3d'), { ssr: false });
 
 export default function Matrix({ nodes, links }) {
   const labelRendererRef = useRef(null);
+  const router = Router; // Initialize Next.js router
   const [loading, setLoading] = useState(true); // Loading state for initial load
 
   useEffect(() => {
@@ -54,6 +56,13 @@ export default function Matrix({ nodes, links }) {
     }
   };
 
+  const onNodeClick = (node) => {
+    if (node && node.id) {
+      // Navigate to the movie detail page using Next.js router
+      window.open(`/movies/${node.id}`, '_blank');
+    }
+  };
+
   return (
     <>
       {labelRendererRef.current && (
@@ -63,14 +72,14 @@ export default function Matrix({ nodes, links }) {
             backgroundColor="#0a0a0a"
             nodeThreeObject={nodeThreeObject}
             linkOpacity={0.02}
-            nodeRelSize={1}
             enableNodeDrag={false}
             showNavInfo={false}
             warmupTicks={23}
-            cooldownTicks={10} // Number of ticks before the engine stops after initial load
+            cooldownTicks={10}
             onNodeHover={onNodeHover}
+            onNodeClick={onNodeClick} // Add the click handler here
             extraRenderers={[labelRendererRef.current]}
-            onEngineStop={() => setLoading(false)} // Stop loading after the initial simulation
+            onEngineStop={() => setLoading(false)}
           />
           {loading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black z-10">
@@ -79,6 +88,6 @@ export default function Matrix({ nodes, links }) {
           )}
         </>
       )}
-      </>
+    </>
   );
 }

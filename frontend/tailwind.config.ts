@@ -9,47 +9,46 @@ const config: Config = {
   ],
   theme: {
   	extend: {
-		fontFamily: {
+  		fontFamily: {
   			sans: ['Inter', 'sans-serif']
   		},
-		fontSize: {
-  		'2xs': '0.675rem',
-  		'3xs': '0.6rem'
-		},
-		height: {
-			// Tailwind default ends at 96 (24rem)
-			'81': '21rem',
-			'82': '21.5rem',
-			'83': '22rem',
-			'84': '22.5rem',
-			'85': '23rem',
-			'86': '23.5rem',
-			'97': '25rem',
-			'98': '26rem',
-			'100': '27rem',
-			'102': '28rem',
-			'104': '29rem',
-			'106': '30rem',
-			'108': '31rem',
-			'110': '32rem',
-		  },
-		  width: {
-			// Tailwind default ends at 96 (24rem)
-			'81': '21rem',
-			'82': '21.5rem',
-			'83': '22rem',
-			'84': '22.5rem',
-			'85': '23rem',
-			'86': '23.5rem',
-			'97': '25rem',
-			'98': '26rem',
-			'100': '27rem',
-			'102': '28rem',
-			'104': '29rem',
-			'106': '30rem',
-			'108': '31rem',
-			'110': '32rem',
-		  },
+  		fontSize: {
+  			'2xs': '0.675rem',
+  			'3xs': '0.6rem'
+  		},
+  		height: {
+  			'81': '21rem',
+  			'82': '21.5rem',
+  			'83': '22rem',
+  			'84': '22.5rem',
+  			'85': '23rem',
+  			'86': '23.5rem',
+  			'97': '25rem',
+  			'98': '26rem',
+  			'100': '27rem',
+  			'102': '28rem',
+  			'104': '29rem',
+  			'106': '30rem',
+  			'108': '31rem',
+  			'110': '32rem',
+  			'200': '54rem'
+  		},
+  		width: {
+  			'81': '21rem',
+  			'82': '21.5rem',
+  			'83': '22rem',
+  			'84': '22.5rem',
+  			'85': '23rem',
+  			'86': '23.5rem',
+  			'97': '25rem',
+  			'98': '26rem',
+  			'100': '27rem',
+  			'102': '28rem',
+  			'104': '29rem',
+  			'106': '30rem',
+  			'108': '31rem',
+  			'110': '32rem'
+  		},
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',

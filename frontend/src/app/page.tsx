@@ -20,18 +20,15 @@ export default function Home() {
   const [movies, setMovies] = useState([] as omdb[]);
   const [showForceGraph, setShowForceGraph] = useState(true);
   const [isMovieMenuOpen, setIsMovieMenuOpen] = useState(true); // State to toggle visibility
-  const [pauseAnimation, setPauseAnimation] = useState(false); // State to control animation in Matrix
 
   // Debounce query input to prevent too many API calls
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query.trim());  // Set debounced query after 900ms of inactivity
-      setPauseAnimation(false); // Resume animation when the user stops typing
     }, 900);  // Debounce by 900ms
   
     return () => {
       clearTimeout(handler); // Clear the timeout if the user keeps typing
-      setPauseAnimation(true); // Pause the animation while typing
     };
   }, [query]); // Only trigger when `query` changes
 
@@ -44,8 +41,7 @@ export default function Home() {
           return res.json();
         })
         .then((data) => {
-          setData(data);
-          setPauseAnimation(false); // Resume animation after data is fetched
+          setData(data); // Resume animation after data is fetched
         })
         .catch((err) => console.error(err));
     }
@@ -55,7 +51,7 @@ export default function Home() {
   useEffect(() => {
     const fetchIDs = async (query: string) => {
       try {
-        const response = await fetch(`${MWAPI}/search/?query=${encodeURIComponent(query)}`);
+        const response = await fetch(`${MWAPI}/search/?query=${encodeURIComponent(query)}&?k=50`);
         if (!response.ok) {
           throw new Error("Error fetching movie IDs");
         }
@@ -103,7 +99,7 @@ export default function Home() {
   return (
     <>
       <div className="relative w-screen h-screen overflow-hidden bg-neutral-950">
-        <div className='relative z-40 w-screen h-screen'>
+        <div className='z-40 w-screen h-screen'>
           {renderGraph()}        
         </div>
         {/* Input component */}
