@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from 'react';
-import type { Metadata } from "next";
 import Link from 'next/link';
+import { BsStars } from "react-icons/bs";
+import { Button } from '../components/ui/button';
 import { Inter } from 'next/font/google';
 import "./globals.css";
-import { Button } from '../components/ui/button';
-import { BsStars } from "react-icons/bs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-
+import { AccountAvatar } from '@/components/AccountAvatar';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -46,27 +44,25 @@ export default function RootLayout({
           {/* Buttons Menu */}
           {isMenuVisible && (
             <div className="flex flex-row space-x-2 transition-opacity duration-300 ease-in-out">
-              <Button className="menu-button rounded-full bg-neutral-700 hover:bg-neutral-800 w-20 h-7"><Link href={'/games'}>Games</Link></Button>
-              <Button className="menu-button rounded-full bg-neutral-700 hover:bg-neutral-800 w-20 h-7"><Link href={'/reviews'}>Reviews</Link></Button>
+              <Button className="menu-button rounded-full bg-neutral-700 hover:bg-neutral-800 w-20 h-7">
+                <Link href={'/games'}>Games</Link>
+              </Button>
+              <Button className="menu-button rounded-full bg-neutral-700 hover:bg-neutral-800 w-20 h-7">
+                <Link href={'/reviews'}>Reviews</Link>
+              </Button>
               <Button className="menu-button rounded-full w-7 h-7 bg-violet-900">
                 <Link href={"/"}>
-                  <h1><BsStars className='text-white'/></h1>
+                  <BsStars className='text-white' />
                 </Link>
-              </Button>              
+              </Button>
             </div>
           )}
-
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
-
-          
-          <div className=''>
-            
-          </div>
         </div>
 
+        {/* Avatar in the top-right corner */}
+        <div className="absolute top-6 right-6 z-50">
+          <AccountAvatar />
+        </div>
 
         {/* Content */}
         {children}

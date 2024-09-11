@@ -62,14 +62,26 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({data, poster, videos}) => {
       {/* Movie Details */}
       <div className="flex-col translate-y-20">
 
-        <div className='pt-2 pl-2 flex gap-4 translate-x-0 -translate-y-8'>
-          <div className="flex space-x-1 items-center text-sm pt-1 pb-1 pl-1 text-neutral-400">
-            <SiImdb className='text-yellow-400 text-3xl' />
-            <span className='text-3xl'>{data.imdbRating}/10</span>
-            <SiRottentomatoes className='text-red-500 text-3xl' />
-            <span className='text-3xl'>{data.Ratings[1].Value}</span>
-            <FaHatWizard className='text-blue-400 text-3xl' />
-            <span className='text-3xl'>{data.Metascore}</span>
+        <div className='pt-2 pl-2 flex gap-6 translate-x-0 -translate-y-8'>
+          <div className="flex space-x-1 gap-6 items-center text-sm pt-1 pb-1 pl-1 text-neutral-400">
+            {(data.imdbRating) &&
+            (<div className='flex gap-2'>
+              <SiImdb className='text-yellow-400 text-3xl' />
+              <span className='text-3xl'>{data.imdbRating}/10</span>
+            </div>)
+            }
+            { (data.Ratings[1]) &&
+            <div className='flex gap-2'> 
+              <SiRottentomatoes className='text-red-500 text-3xl' />
+              <span className='text-3xl'>{data.Ratings[1].Value}</span>
+            </div>
+            }
+            {(data.Metascore) &&
+            <div className='flex gap-2'>
+              <FaHatWizard className='text-blue-400 text-3xl' />
+              <span className='text-3xl'>{data.Metascore}</span>
+            </div>
+            }
           </div>
         </div>
 

@@ -27,6 +27,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   let data = await response2.json();
   data = data.movie_results[0];
   const id = data.id;
+  console.log(data.id);
   
   const video_response = await fetch(
     `https://api.themoviedb.org/3/movie/${id}/videos`,
