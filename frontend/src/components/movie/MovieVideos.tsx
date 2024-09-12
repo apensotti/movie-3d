@@ -20,7 +20,7 @@ export interface MovieVideosProps {
 const MovieVideos = ({ results }: MovieVideosProps) => {
   return (
     <div className="ml-80 mr-80">
-      <h1 className="text-white text-4xl pb-6">Videos</h1>
+      <h1 className="text-white font-extrabold text-4xl pb-6">Videos</h1>
       <div className="flex flex-wrap gap-4">
         {results.map((video) => (
           <div key={video.id} className="w-96 flex">

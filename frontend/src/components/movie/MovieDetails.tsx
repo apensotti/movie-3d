@@ -30,7 +30,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({data, poster, videos}) => {
 
       {/* Title and Year etc*/}
       <div className='flex-col'>
-        <h1 className="text-white text-5xl">{data.Title}</h1>
+        <h1 className="text-white font-extrabold text-5xl">{data.Title}</h1>
         <div className="flex space-x-1 items-center text-sm pt-1 pb-1 pl-1 text-neutral-400">
           <span>{data.Year}</span>
           <span>&bull;</span>

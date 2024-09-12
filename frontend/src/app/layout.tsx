@@ -1,5 +1,6 @@
 "use client";
 
+import { getUserSession } from '@/lib/session';
 import { useState } from 'react';
 import Link from 'next/link';
 import { BsStars } from "react-icons/bs";
@@ -10,7 +11,8 @@ import { AccountAvatar } from '@/components/AccountAvatar';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export default function RootLayout({
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

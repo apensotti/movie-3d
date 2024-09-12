@@ -19,7 +19,7 @@ export default function Home() {
   ]);
   const [movies, setMovies] = useState([] as omdb[]);
   const [showForceGraph, setShowForceGraph] = useState(true);
-  const [isMovieMenuOpen, setIsMovieMenuOpen] = useState(true); // State to toggle visibility
+  const [isMovieMenuOpen, setIsMovieMenuOpen] = useState(false); // State to toggle visibility
 
   // Debounce query input to prevent too many API calls
   useEffect(() => {
@@ -98,7 +98,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="relative w-screen h-screen overflow-hidden bg-neutral-950">
+      <div className="relative w-screen h-screen overflow-hidden">
         <div className='z-40 w-screen h-screen'>
           {renderGraph()}        
         </div>

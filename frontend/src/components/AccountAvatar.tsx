@@ -6,6 +6,7 @@ import { RiAccountCircleLine } from "react-icons/ri";
 import { MdOutlinePayments } from "react-icons/md";
 import { PiGearSixBold } from "react-icons/pi";
 import { MdOutlineExitToApp } from "react-icons/md";
+import { RiExternalLinkLine } from "react-icons/ri";
 
 
 import {
@@ -39,23 +40,23 @@ export function AccountAvatar() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem className='gap-2'>
-                <RiAccountCircleLine className='text-xl'/>
+                <RiAccountCircleLine className='text-lg'/>
                 Profile
               </DropdownMenuItem>
               <DropdownMenuItem className='gap-2'>
-                <MdOutlinePayments className='text-xl'/>
+                <MdOutlinePayments className='text-lg'/>
                 Billing
               </DropdownMenuItem>
               <DropdownMenuItem className='gap-2'>
-                <PiGearSixBold className='text-xl'/>
+                <PiGearSixBold className='text-lg'/>
                 Settings
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Support</DropdownMenuItem>
+            <DropdownMenuItem className='gap-1'>Support <RiExternalLinkLine className='text-2xs'/></DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className='gap-2'>
-                <MdOutlineExitToApp className='text-xl rotate-180'/>
+                <MdOutlineExitToApp className='text-lg rotate-180'/>
                 Log out
             </DropdownMenuItem>
         </DropdownMenuContent>

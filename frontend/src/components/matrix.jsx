@@ -69,7 +69,7 @@ export default function Matrix({ nodes, links }) {
         <>
           <ForceGraph3D
             graphData={{ nodes, links }}
-            backgroundColor="#0a0a0a"
+            backgroundColor="#171717"
             nodeThreeObject={nodeThreeObject}
             linkOpacity={0.02}
             enableNodeDrag={false}
