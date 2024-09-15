@@ -6,13 +6,14 @@ import re
 import numpy as np
 from ast import literal_eval
 from fastapi.middleware.cors import CORSMiddleware
+import pandas as pd
 
 app = FastAPI()
 
 # Allow all origins, or specify only allowed domains
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000","http://localhost:3001"],  # Or ["*"] to allow all origins
+    allow_origins=["http://localhost:3000","http://localhost:3001", "*"],  # Or ["*"] to allow all origins
     allow_credentials=True,
     allow_methods=["*"],  # Allows all HTTP methods
     allow_headers=["*"],  # Allows all headers
@@ -53,6 +54,11 @@ def get_genres(ids):
 # Load FAISS index (index.bin)
 index = faiss.read_index('data/index.bin')
 
+# Load metadata
+with open('data/metadata.json', 'r') as f:
+    metadata = json.load(f)
+
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome to Movie Wizard's Similarity Search API!"}
@@ -85,12 +91,14 @@ def generate_graph(ids: str):
 
 @app.get("/search/")
 def search(query: str, k: int = 50):
+    data = pd.read_csv('data/movies.csv')
     sentences = split_into_sentences(query)
     embedding = np.array([get_st_embeddings(sentence, model) for sentence in sentences])
     D, I = index.search(embedding, k=k)
-    results = [metadata[i]['imdb_id'] for i in I[0]]
-    results = list(set(results))
-    return {"results": results}
+    ids = [metadata[i]['imdb_id'] for i in I[0]]
+    results = data[data['imdb_id'].isin(ids)]
+    results_sorted = list(results.sort_values(by=['popularity'], ascending=False)['imdb_id'].values)
+    return {"results": results_sorted}
 
 @app.get("/movies/")
 def get_movies():

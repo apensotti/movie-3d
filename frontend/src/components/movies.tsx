@@ -4,6 +4,7 @@ import { SiRottentomatoes } from "react-icons/si";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi"; // Arrow icons for toggling
 import Draggable from 'react-draggable';
 import Link from 'next/link';
+const MWAPI = process.env.NEXT_PUBLIC_MWAPI;
 
 interface MoviesProps {
     movies: omdb[]
@@ -36,8 +37,8 @@ const Movies = ({ movies, isVisible, setIsVisible }: MoviesProps) => {
                 <div className='overflow-y-scroll w-full h-full no-scrollbar z-30'>
                     {isVisible && movies.map((movie) => {
                         return (
-                            <Link href={"/movies/"+movie.imdbID } key={movie.imdbID}>                                
-                                <div key={movie.imdbID} className='flex items-center justify-between pb-5 pt-5 gap-5 shadow-lg px-2 hover:bg-neutral-900 hover:rounded-2xl z-50'>
+                            <Link href={`/movies/`+movie.imdbID } key={movie.imdbID}>                                
+                                <div key={movie.imdbID} className='flex items-center justify-between pb-5 pt-5 gap-5 shadow-lg px-2 hover:bg-violet-900 hover:rounded-2xl z-50'>
                                     
                                     <div className='flex flex-row gap-2'>
                                         <img src={movie.Poster} alt={movie.Title} width={50} height={50} className='pl-2'/>

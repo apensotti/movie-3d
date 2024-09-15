@@ -8,23 +8,37 @@ import Movies from '../components/movies';
 import { Input } from '../components/ui/input';
 
 export default function Home() {
-  const MWAPI = process.env.NEXT_PUBLIC_MWAPI;
-  const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI;
+  const MWAPI = process.env.NEXT_PUBLIC_MWAPI; // MovieWizard API base URL
+  const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI; // OMDB API base URL
 
-  const [query, setQuery] = useState<string>(''); // Stores the actual user input
-  const [debouncedQuery, setDebouncedQuery] = useState<string>(''); // Stores the debounced version of the query
+  const [query, setQuery] = useState<string>(''); // Initially set to empty string
+  const [debouncedQuery, setDebouncedQuery] = useState<string>(''); 
   const [data, setData] = useState<GraphData>({ nodes: [], links: [] });
-  const [ids, setIds] = useState([
+  const [ids, setIds] = useState<string[]>([
     'tt0114709', 'tt0113497', 'tt0113228', 'tt0114885', 'tt0113041', 'tt6209470', 'tt2028550', 'tt0303758',
   ]);
   const [movies, setMovies] = useState([] as omdb[]);
   const [showForceGraph, setShowForceGraph] = useState(true);
-  const [isMovieMenuOpen, setIsMovieMenuOpen] = useState(false); // State to toggle visibility
+  const [isMovieMenuOpen, setIsMovieMenuOpen] = useState(false);
+
+  // Load the query from localStorage on the first render (client-side only)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedQuery = window.localStorage.getItem('query');
+      if (savedQuery) {
+        setQuery(savedQuery); // Load query from localStorage if it exists
+      }
+    }
+  }, []);
 
   // Debounce query input to prevent too many API calls
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query.trim());  // Set debounced query after 900ms of inactivity
+      // Save the query to localStorage whenever it changes
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('query', query); // Store query in localStorage
+      }
     }, 900);  // Debounce by 900ms
   
     return () => {
@@ -45,18 +59,18 @@ export default function Home() {
         })
         .catch((err) => console.error(err));
     }
-  }, [ids]);
+  }, [ids, MWAPI]);
 
   // Fetch movie IDs based on the `debouncedQuery`
   useEffect(() => {
     const fetchIDs = async (query: string) => {
       try {
-        const response = await fetch(`${MWAPI}/search/?query=${encodeURIComponent(query)}&?k=50`);
+        const response = await fetch(`${MWAPI}/search/?query=${encodeURIComponent(query)}&k=50`);
         if (!response.ok) {
           throw new Error("Error fetching movie IDs");
         }
         const data = await response.json();
-        setIds(data.results);
+        setIds(data.results);  // Assuming data.results contains the array of movie IDs
       } catch (error) {
         console.error("Error fetching IDs:", error);
       }
@@ -65,7 +79,7 @@ export default function Home() {
     if (debouncedQuery) {
       fetchIDs(debouncedQuery); // Trigger the API call only when the debouncedQuery changes
     }
-  }, [debouncedQuery]); // This effect triggers only when `debouncedQuery` is updated
+  }, [debouncedQuery, MWAPI]); // This effect triggers only when `debouncedQuery` is updated
 
   // Fetch movie details based on `ids`
   useEffect(() => {
@@ -86,7 +100,7 @@ export default function Home() {
     if (ids.length > 0) {
       fetchMovies();
     }
-  }, [ids]);
+  }, [ids, OMBDAPI]);
 
   const renderGraph = () => {
     if (showForceGraph) {
@@ -103,7 +117,7 @@ export default function Home() {
           {renderGraph()}        
         </div>
         {/* Input component */}
-        <div className="absolute bottom-5 left-64 transform -translate-x-1/2 w-full max-w-96 pb-2 z-50 scale-125 shadow-black shadow-2xl">
+        <div className="absolute bottom-5 left-64 transform -translate-x-1/2 w-full max-w-96 pb-2 z-50 scale-125">
           <Input
             type="text"
             className="w-full rounded-full align-middle"

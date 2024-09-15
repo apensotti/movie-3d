@@ -23,15 +23,23 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import Link from 'next/link';
 
-export function AccountAvatar() {
+interface AccountAvatarProps {
+  imageLink: string | undefined | null;
+}
+
+export function AccountAvatar({imageLink}: AccountAvatarProps) { 
   return (
     <DropdownMenu>
         <DropdownMenuTrigger asChild>
             <Button className="menu-button rounded-full w-7 h-7 bg-violet-900">
                 <Avatar>
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>CN</AvatarFallback>
+                  {imageLink ? (
+                    <AvatarImage src={imageLink} />
+                  ) : (
+                    <AvatarImage src="/defaultprofile2.png" />
+                  )}
                 </Avatar>
             </Button>
         </DropdownMenuTrigger>
@@ -55,9 +63,11 @@ export function AccountAvatar() {
             <DropdownMenuSeparator />
             <DropdownMenuItem className='gap-1'>Support <RiExternalLinkLine className='text-2xs'/></DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className='gap-2'>
+            <DropdownMenuItem className='gap-2' >
+              <Link href='/api/auth/signout' className='flex items-center'>
                 <MdOutlineExitToApp className='text-lg rotate-180'/>
                 Log out
+              </Link>
             </DropdownMenuItem>
         </DropdownMenuContent>
     </DropdownMenu>

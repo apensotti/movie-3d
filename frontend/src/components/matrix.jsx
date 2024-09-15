@@ -82,7 +82,7 @@ export default function Matrix({ nodes, links }) {
             onEngineStop={() => setLoading(false)}
           />
           {loading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black z-10">
+            <div className="absolute inset-0 flex items-center justify-center bg-neutral-900 z-10">
               <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-white"></div>
             </div>
           )}
