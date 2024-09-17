@@ -20,7 +20,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({data, poster, videos}) => {
     setShowFullPlot(!showFullPlot);
   };
 
-  console.log(videos);
+  console.log(data);
 
   const trailer = videos.results.find((video: Video) => video.name.toLowerCase().includes('trailer'));
   

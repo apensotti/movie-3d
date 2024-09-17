@@ -8,7 +8,7 @@ function LoginSignup() {
         <Button className='menu-button rounded-full bg-neutral-700 hover:bg-neutral-800 w-20 h-7'>
             <Link href={'/login'}>Login</Link>
         </Button>
-        <Button className='menu-button rounded-full bg-violet-900 hover:bg-neutral-800 w-20 h-7'>
+        <Button className='menu-button rounded-full bg-violet-800 hover:bg-orange-500 w-20 h-7'>
             <Link href={'/signup'} className='font-semibold'>Signup</Link>
         </Button>
     </div>

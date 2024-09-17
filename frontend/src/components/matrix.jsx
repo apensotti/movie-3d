@@ -4,9 +4,6 @@ import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
-import { useRouter } from 'next/router'; // Import Next.js router
-import { Input } from './ui/input';
-import Movies from './movies';
 import Router from 'next/router';
 const ForceGraph3D = dynamic(() => import('react-force-graph-3d'), { ssr: false });
 
@@ -25,8 +22,10 @@ export default function Matrix({ nodes, links }) {
     labelRendererRef.current = labelRenderer;
   }, []);
 
-  const nodeThreeObject = () => {
-    const geometry = new THREE.SphereGeometry(1, 24, 24);
+  // Dynamically set the node size based on its popularity
+  const nodeThreeObject = (node) => {
+    const radius = Math.max(1, Math.log(node.size + 1)); // Adjust node size based on popularity (log scale)
+    const geometry = new THREE.SphereGeometry(radius, 24, 24); // Use the radius based on popularity
     const material = new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: false });
     const sphere = new THREE.Mesh(geometry, material);
     sphere.castShadow = false;
@@ -70,7 +69,7 @@ export default function Matrix({ nodes, links }) {
           <ForceGraph3D
             graphData={{ nodes, links }}
             backgroundColor="#171717"
-            nodeThreeObject={nodeThreeObject}
+            nodeThreeObject={nodeThreeObject} // Use nodeThreeObject for dynamic sizing
             linkOpacity={0.02}
             enableNodeDrag={false}
             showNavInfo={false}

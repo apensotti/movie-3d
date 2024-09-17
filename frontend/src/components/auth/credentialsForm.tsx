@@ -56,12 +56,14 @@ export function CredentialsForm(props: CredentialsFormProps) {
         name="password"
         placeholder="Password"
         required
-        className="w-full px-4 py-4 mb-4 border border-neutral-700 bg-neutral-800 text-white rounded-lg"
+        className="w-full px-4 py-4 mb-1 border border-neutral-700 bg-neutral-800 text-white rounded-lg"
       />
+
+      <a className="text-sm flex justify-end text-blue-700">forgot password?</a>
 
       <button
         type="submit"
-        className="w-full h-12 px-6 mt-4 text-lg text-white transition-colors duration-150 bg-violet-800 rounded-lg focus:shadow-outline hover:bg-blue-700"
+        className="w-full h-12 px-6 mt-4 text-lg text-white transition-colors duration-150 bg-violet-800 rounded-lg focus:shadow-outline hover:bg-orange-500"
       >
         Log in
       </button>

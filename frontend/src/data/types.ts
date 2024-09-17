@@ -4,6 +4,7 @@ export interface Node {
   id: string;
   title: string;
   index: number;
+  populartiy: number;
   x: number;
   y: number;
   vy: number;
@@ -23,6 +24,7 @@ export interface GraphData {
 export interface NodeObject {
   id?: string | number;
   title?: string;
+  populartiy?: number;
   x?: number;
   y?: number;
   z?: number;

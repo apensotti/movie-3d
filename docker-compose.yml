@@ -28,7 +28,7 @@ services:
       - app-network
     environment:
       - NEXT_PUBLIC_MWAPI=https://www.moviewizard.com/wizapi
-      - NEXT_PUBLIC_OMBDAPI=https://www.omdbapi.com/?&plot=full&apikey=f523276c  
+      - NEXT_PUBLIC_OMBDAPI=https://www.omdbapi.com/?apikey=f523276c&plot=full  
       - GOOGLE_CLIENT_ID=543409743576-hji2c36frodkurna8b7hhp4agsc60i33.apps.googleusercontent.com
       - GOOGLE_CLIENT_SECRET=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
       - NEXTAUTH_SECRET=DNYs9V+PapNsy+kRVyxyzhbuDVHNVXn5GQArzgKHO1U=      

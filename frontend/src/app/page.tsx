@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Matrix from '../components/matrix';
 import { GraphData } from "../data/types";
 import { omdb } from '../data/types';
@@ -9,7 +9,8 @@ import { Input } from '../components/ui/input';
 
 export default function Home() {
   const MWAPI = process.env.NEXT_PUBLIC_MWAPI; // MovieWizard API base URL
-  const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI; // OMDB API base URL
+  const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI_URL;
+  const OMBDKEY = process.env.NEXT_PUBLIC_OMBDAPI_KEY;
 
   const [query, setQuery] = useState<string>(''); // Initially set to empty string
   const [debouncedQuery, setDebouncedQuery] = useState<string>(''); 
@@ -21,6 +22,8 @@ export default function Home() {
   const [showForceGraph, setShowForceGraph] = useState(true);
   const [isMovieMenuOpen, setIsMovieMenuOpen] = useState(false);
 
+  const inputRef = useRef<HTMLInputElement>(null); // Create a ref for the input field
+
   // Load the query from localStorage on the first render (client-side only)
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -31,20 +34,13 @@ export default function Home() {
     }
   }, []);
 
-  // Debounce query input to prevent too many API calls
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedQuery(query.trim());  // Set debounced query after 900ms of inactivity
-      // Save the query to localStorage whenever it changes
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem('query', query); // Store query in localStorage
-      }
-    }, 900);  // Debounce by 900ms
-  
-    return () => {
-      clearTimeout(handler); // Clear the timeout if the user keeps typing
-    };
-  }, [query]); // Only trigger when `query` changes
+  // Function to handle the arrow click and update the query from the ref
+  const handleArrowClick = () => {
+    if (inputRef.current) {
+      const inputValue = inputRef.current.value; // Get the current input value from ref
+      setQuery(inputValue); // Update query state only when the arrow is clicked
+    }
+  };
 
   // Fetch Graph Data based on `ids`
   useEffect(() => {
@@ -76,17 +72,17 @@ export default function Home() {
       }
     };
     
-    if (debouncedQuery) {
-      fetchIDs(debouncedQuery); // Trigger the API call only when the debouncedQuery changes
+    if (query) {
+      fetchIDs(query); // Trigger the API call only when the debouncedQuery changes
     }
-  }, [debouncedQuery, MWAPI]); // This effect triggers only when `debouncedQuery` is updated
+  }, [query, MWAPI]); // This effect triggers only when `debouncedQuery` is updated
 
   // Fetch movie details based on `ids`
   useEffect(() => {
     const fetchMovies = async () => {
       try {
         const promises = ids.map(async (id) => {
-          const response = await fetch(`${OMBDAPI}&i=${id}`);
+          const response = await fetch(`${OMBDAPI}?i=${id}&plot=full&apikey=${OMBDKEY}`);
           const data = await response.json();
           return data;
         });
@@ -116,19 +112,20 @@ export default function Home() {
         <div className='z-40 w-screen h-screen'>
           {renderGraph()}        
         </div>
-        {/* Input component */}
+        {/* Input component */} 
         <div className="absolute bottom-5 left-64 transform -translate-x-1/2 w-full max-w-96 pb-2 z-50 scale-125">
           <Input
             type="text"
             className="w-full rounded-full align-middle"
             placeholder="Summon the Wizard..."
-            value={query}
-            onInput={(e) => setQuery(e.currentTarget.value)}  // Update query directly
+            defaultValue={query} // Display the current query in the input
+            ref={inputRef} // Pass the ref to the input element
+            onArrowClick={handleArrowClick} // Trigger the API call on arrow click
           />
         </div>
 
         {/* Overflow-hidden container with Movies inside */}
-        <div className={`absolute bottom-16 left-60 transform translate-y-3 -translate-x-1/2 w-96 z-40 overflow-hidden transition-all duration-1 ${isMovieMenuOpen ? 'h-100' : 'h-9'}`}>
+        <div className={`absolute bottom-16 left-60 transform translate-y-3 -translate-x-52 w-96 z-40 overflow-hidden transition-all duration-1 ${isMovieMenuOpen ? 'h-100' : 'h-9'}`}>
           <div className="w-full">
             <Movies movies={movies} isVisible={isMovieMenuOpen} setIsVisible={setIsMovieMenuOpen} />
           </div>

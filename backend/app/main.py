@@ -58,10 +58,18 @@ index = faiss.read_index('data/index.bin')
 with open('data/metadata.json', 'r') as f:
     metadata = json.load(f)
 
+# Load inital graph data
+with open('data/data.json', 'r') as f:
+    graph_data = json.load(f)
+
 
 @app.get("/")
 def read_root():
     return {"message": "Welcome to Movie Wizard's Similarity Search API!"}
+
+@app.get("/generate_graph/init")
+def generate_graph_init():
+    return graph_data
 
 @app.get("/generate_graph/")
 def generate_graph(ids: str):
@@ -74,7 +82,7 @@ def generate_graph(ids: str):
     movies = get_selected_movies(ids)
 
     for genre in set(genres):
-        node = {"id": genre, "title": genre}
+        node = {"id": genre, "title": genre, "size": 1}
         nodes.append(node)
 
     for i,row in enumerate(movies):
@@ -85,7 +93,8 @@ def generate_graph(ids: str):
             pass
         for genre in literal_eval((row['genres'])):
             links.append({"source": genre, "target": row['imdb_id']})
-        nodes.append({"id": row['imdb_id'], "title": row['title']})
+
+        nodes.append({"id": row['imdb_id'], "title": row['title'], "size": row['popularity']})
 
     return {"nodes": nodes, "links": links}
 

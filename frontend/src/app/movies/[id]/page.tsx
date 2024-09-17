@@ -3,13 +3,14 @@ import MovieVideos, { MovieVideosProps } from "../../../components/movie/MovieVi
 import PageNav from "../../../components/movie/PageNav";
 import { Video } from "../../../components/movie/MovieVideos";
 
-const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI;
+const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI_URL;
 
 export default async function Page({ params }: { params: { id: string } }) {
 
-  const response1 = await fetch(`${OMBDAPI}&i=${params.id}`);
+  const response1 = await fetch(`${OMBDAPI}?i=${params.id}&plot=full&apikey=${process.env.NEXT_PUBLIC_OMBDAPI_KEY}`);
   const ombd_data: omdb = await response1.json();
 
+  console.log(ombd_data);
 
   const options = {
     method: 'GET',
