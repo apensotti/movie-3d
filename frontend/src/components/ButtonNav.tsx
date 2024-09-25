@@ -31,17 +31,21 @@ const ButtonNav = () => {
 
     {isMenuVisible && (
       <div className="flex flex-row space-x-2 transition-opacity duration-300 ease-in-out">
-        <Button className="menu-button rounded-full bg-neutral-700 hover:bg-neutral-800 w-20 h-7">
-          <Link href={'/games'}>Games</Link>
-        </Button>
-        <Button className="menu-button rounded-full bg-neutral-700 hover:bg-neutral-800 w-20 h-7">
-          <Link href={'/reviews'}>Reviews</Link>
-        </Button>
+        <Link href={'/games'}>
+          <Button className="menu-button rounded-full bg-neutral-800 hover:bg-neutral-875 w-20 h-7">
+            Games
+          </Button>
+        </Link>
+        <Link href={'/reviews'}>
+          <Button className="menu-button rounded-full bg-neutral-800 hover:bg-neutral-875 w-20 h-7">
+            Reviews
+          </Button>
+        </Link>
+        <Link href={"/"}>
         <Button className="menu-button rounded-full w-7 h-7 bg-violet-800 hover:bg-orange-500">
-          <Link href={"/"}>
-            <BsStars className='text-white' />
-          </Link>
+            <p><BsStars className='text-white' /></p>
         </Button>
+        </Link>
       </div>
     )}
     </>

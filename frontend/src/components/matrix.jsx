@@ -63,7 +63,7 @@ export default function Matrix({ nodes, links }) {
   };
 
   return (
-    <>
+    <div className='z-40 w-screen h-screen'>
       {labelRendererRef.current && (
         <>
           <ForceGraph3D
@@ -87,6 +87,6 @@ export default function Matrix({ nodes, links }) {
           )}
         </>
       )}
-    </>
+    </div>
   );
 }

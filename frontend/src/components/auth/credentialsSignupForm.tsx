@@ -2,9 +2,10 @@
 
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "../ui/button";
 import { PrismaClient } from "@prisma/client"; // Make sure Prisma is correctly set up
+import { register } from "@/lib/actions/register";
 
 interface CredentialsFormProps {
   csrfToken?: string;
@@ -16,7 +17,8 @@ export function CredentialsSignupForm(props: CredentialsFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
-  const [passwordVisible, setPasswordVisible] = useState(false); // Tracks if password field should be shown
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const ref = useRef<HTMLFormElement>(null);
 
   // First form submission, only capture email
   const handleEmailSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -41,25 +43,22 @@ export function CredentialsSignupForm(props: CredentialsFormProps) {
 
     if (email && password) {
       try {
-        // Create a new user in the database with Prisma
-        const user = await prisma.user.create({
-          data: {
-            email,
-            password: password.toString(), // Store password (consider hashing it in production)
-            name: "New User", // Default name
-          },
-        });
-
-        if (user) {
+          const r = await register({
+            email: data.get("email"),
+            password: data.get("password")
+          });
+          console.log(r);
+          
+        if (r) {
           // Optionally sign the user in after creation
           const signInResponse = await signIn("credentials", {
             email,
             password: password.toString(),
             redirect: false,
           });
-
+          ref.current?.reset();
           if (signInResponse && !signInResponse.error) {
-            router.push("/"); // Redirect to homepage after successful sign-up
+            router.push("/login"); // Redirect to homepage after successful sign-up
           } else {
             setError("Error signing in the user.");
           }

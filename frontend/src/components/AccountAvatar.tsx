@@ -24,12 +24,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Link from 'next/link';
+import { signOut } from "next-auth/react";
 
 interface AccountAvatarProps {
   imageLink: string | undefined | null;
 }
 
 export function AccountAvatar({imageLink}: AccountAvatarProps) { 
+  const handleSignOut = () => {
+    signOut({
+      callbackUrl: "/", // The URL to redirect to after logout
+    });
+  };
+
   return (
     <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -43,7 +50,7 @@ export function AccountAvatar({imageLink}: AccountAvatarProps) {
                 </Avatar>
             </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56 translate-y-3 dark bg-neutral-900 -translate-x-4">
+        <DropdownMenuContent className="w-56 translate-y-3 dark bg-neutral-800 -translate-x-4">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
@@ -63,12 +70,12 @@ export function AccountAvatar({imageLink}: AccountAvatarProps) {
             <DropdownMenuSeparator />
             <DropdownMenuItem className='gap-1'>Support <RiExternalLinkLine className='text-2xs'/></DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className='gap-2' >
-              <Link href='/api/auth/signout' className='flex items-center'>
-                <MdOutlineExitToApp className='text-lg rotate-180'/>
-                Log out
-              </Link>
-            </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleSignOut}>
+                  <div className='flex items-center gap-2'>
+                    <MdOutlineExitToApp className='text-lg rotate-180'/>
+                    Log out
+                  </div>
+              </DropdownMenuItem>
         </DropdownMenuContent>
     </DropdownMenu>
   )

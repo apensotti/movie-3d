@@ -13,7 +13,9 @@ services:
       - "8000"
     networks:
       - app-network
-
+    environment:
+      - OPENAI_API_KEY=sk-xVDTvv4q702kF2VA1SPraYTLCOl1Oqvh2yY6e7fFZFT3BlbkFJbqvF4GRSa5vL3yscXAe_Ibw6ROlICyOhQt8Hq0D-YA
+      - MONGODB_URI=mongodb+srv://alexpensotti:9Nae0ac14Fxhfk5A@moviewizard.unp4g.mongodb.net/mw_users?retryWrites=true&w=majority&appName=MovieWizard
   frontend:
     build:
       context: ./frontend
@@ -33,7 +35,8 @@ services:
       - GOOGLE_CLIENT_SECRET=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
       - NEXTAUTH_SECRET=DNYs9V+PapNsy+kRVyxyzhbuDVHNVXn5GQArzgKHO1U=      
       - DATABASE_URL=postgresql://alex:asflkasjhajgla@localhost:5432/moviewizardusers?schema=public
-      - AUTH_URL=http://moviewizard/api/auth
+      - NEXTAUTH_URL=https://moviewizard.com/api/auth
+      
 
   nginx:
     image: nginx:latest

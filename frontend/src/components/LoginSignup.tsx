@@ -5,12 +5,16 @@ import Link from 'next/link'
 function LoginSignup() {
   return (
     <div className='flex gap-2'>
-        <Button className='menu-button rounded-full bg-neutral-700 hover:bg-neutral-800 w-20 h-7'>
-            <Link href={'/login'}>Login</Link>
-        </Button>
-        <Button className='menu-button rounded-full bg-violet-800 hover:bg-orange-500 w-20 h-7'>
-            <Link href={'/signup'} className='font-semibold'>Signup</Link>
-        </Button>
+        <Link href={'/login'}>
+          <Button className='menu-button rounded-full bg-neutral-800 hover:bg-neutral-850 w-20 h-7 font-semibold'>
+             Login
+          </Button>
+        </Link>
+        <Link href={'/signup'}>
+          <Button className='menu-button rounded-full bg-violet-800 hover:bg-orange-500 w-20 h-7 font-semibold'>
+              Signup
+          </Button>
+        </Link>
     </div>
   )
 }

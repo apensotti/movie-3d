@@ -63,3 +63,7 @@ export interface omdb{
   Production:string,
   Website:string,
   Response:string}
+
+  export interface ChatMessage {
+    content: string;
+  }

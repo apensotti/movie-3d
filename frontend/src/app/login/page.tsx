@@ -1,20 +1,14 @@
+"use client";
+
 import Image from "next/image";
 import googleLogo from "@/public/google.png";
 import githubLogo from "@/public/github.png";
 import { GoogleSignInButton } from "@/components/auth/authButtons";
-import { getServerSession } from "next-auth";
-import {options} from "../../app/api/auth/[...nextauth]/options";
 import { redirect } from "next/navigation";
 import { CredentialsForm } from "@/components/auth/credentialsForm";
 import { getCsrfToken } from "next-auth/react";
 
-export default async function LoginPage() {
-
-    const session = await getServerSession(options);
-
-    console.log("Session: ", session);
-  
-    if (session) return redirect("/");
+export default function LoginPage() {
 
     return (
       <div className="w-full flex flex-col items-center justify-center bg-neutral-900 min-h-screen py-2">

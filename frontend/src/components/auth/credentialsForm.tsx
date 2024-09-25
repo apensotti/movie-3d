@@ -1,7 +1,7 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, redirect } from "next/navigation";
 import { useState } from "react";
 import { Button } from "../ui/button";
 
@@ -22,7 +22,7 @@ export function CredentialsForm(props: CredentialsFormProps) {
       email: data.get("email"),
       password: data.get("password"),
       redirect: false,
-    });
+    }, {redirectTo: '/'});
 
     if (signInResponse && !signInResponse.error) {
       //Redirect to homepage (/timeline)

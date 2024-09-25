@@ -1,119 +1,85 @@
 from fastapi import FastAPI
+from fastapi.responses import StreamingResponse
 from sentence_transformers import SentenceTransformer
 import faiss
 import json
 import re
 import numpy as np
+import random
 from ast import literal_eval
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
+import asyncio
+import uuid
+from dotenv import load_dotenv
+from langchain.chains import create_history_aware_retriever, create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_community.vectorstores import FAISS
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from pymongo.mongo_client import MongoClient
+from pydantic import BaseModel
+from models.models import user, session
+from models.schema import user_serialization, message_serialization, all_sessions, all_users
+from fastapi.encoders import jsonable_encoder
+from motor.motor_asyncio import AsyncIOMotorClient
+import os
+from bson import SON
+from utils.common import get_selected_movies, get_genres, generate_graph_data, get_movie, get_movies
+from utils.langchain import split_into_sentences, get_st_embeddings, faissvdb, search_movies
+from utils.mongodb import get_db, ping_mongodb, validate_user, get_messages
+from services.chat_service import handle_chat
+from typing import List, Dict
+from routers import chat, search, sessions, data
 
 app = FastAPI()
+db = get_db()
 
-# Allow all origins, or specify only allowed domains
+load_dotenv()
+ping_mongodb()
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000","http://localhost:3001", "*"],  # Or ["*"] to allow all origins
+    allow_origins=["http://localhost:3000",
+                   "http://localhost:3001",
+                    "*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all HTTP methods
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"], 
+    allow_headers=["*"], 
 )
 
-model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
-index = faiss.read_index('data/index.bin')
-
-with open('data/metadata.json', 'r') as f:
-    metadata = json.load(f)
-
-with open('data/movies.json', 'r') as f:
-    movies = json.load(f)
-
-
-def split_into_sentences(paragraph):
-    # Regular expression to split by sentence-ending punctuation
-    sentences = re.split(r'(?<=[.!?]) +', paragraph.strip())
-    return sentences
-
-def get_st_embeddings(text, model):
-    inputs = model.encode(text, convert_to_numpy=True)
-    return inputs
-
-def get_selected_movies(ids):
-    data = [movie for movie in movies if movie['imdb_id'] in ids]
-    return data
-
-def get_genres(ids):
-    genres = []
-    data = [d for d in movies if d['imdb_id'] in ids]
-    for row in data:
-        genres.extend(literal_eval(row['genres']))
-    return list(set(genres))
-
-
-
-# Load FAISS index (index.bin)
-index = faiss.read_index('data/index.bin')
-
-# Load metadata
-with open('data/metadata.json', 'r') as f:
-    metadata = json.load(f)
-
-# Load inital graph data
-with open('data/data.json', 'r') as f:
-    graph_data = json.load(f)
-
+app.include_router(chat.router)
+app.include_router(search.router)
+app.include_router(sessions.router)
+app.include_router(data.router)
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to Movie Wizard's Similarity Search API!"}
+    return {"message": "Welcome to Movie Wizard's API!"}
 
-@app.get("/generate_graph/init")
-def generate_graph_init():
-    return graph_data
+@app.get("/users/")
+async def get_user(email: str):
+    user = await db.users.find_one({"email": email})
+    return user_serialization(user)
 
-@app.get("/generate_graph/")
-def generate_graph(ids: str):
-    ids = literal_eval(ids)
+@app.get("/all_users/")
+async def get_all_users():
+    users = db.users.find()
+    return all_users(users)
 
-    nodes = []
-    links = []
+@app.post("/create_user/")
+async def create_user(user: user):
+    try:
+        user_match = await db.users.find_one({"email": user.email})
+        if user_match:
+            return {"status_code": 400, "error": "User already exists"}
 
-    genres = get_genres(ids)
-    movies = get_selected_movies(ids)
+        user_data = jsonable_encoder(user)
+        resp = await db.users.insert_one(user_data)
 
-    for genre in set(genres):
-        node = {"id": genre, "title": genre, "size": 1}
-        nodes.append(node)
-
-    for i,row in enumerate(movies):
-        try:
-            prev_row = movies.iloc[i-1]
-            links.append({"source": prev_row['imdb_id'], "target": row['imdb_id']})
-        except:
-            pass
-        for genre in literal_eval((row['genres'])):
-            links.append({"source": genre, "target": row['imdb_id']})
-
-        nodes.append({"id": row['imdb_id'], "title": row['title'], "size": row['popularity']})
-
-    return {"nodes": nodes, "links": links}
-
-@app.get("/search/")
-def search(query: str, k: int = 50):
-    data = pd.read_csv('data/movies.csv')
-    sentences = split_into_sentences(query)
-    embedding = np.array([get_st_embeddings(sentence, model) for sentence in sentences])
-    D, I = index.search(embedding, k=k)
-    ids = [metadata[i]['imdb_id'] for i in I[0]]
-    results = data[data['imdb_id'].isin(ids)]
-    results_sorted = list(results.sort_values(by=['popularity'], ascending=False)['imdb_id'].values)
-    return {"results": results_sorted}
-
-@app.get("/movies/")
-def get_movies():
-    return movies
-
-@app.get("/get_movie/")
-def get_movie(imdb_id: str):
-    movie = [movie for movie in movies if movie['imdb_id'] == imdb_id]
-    return movie
+        return {"status_code": 200, "id": str(resp.inserted_id)}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"status_code": 500, "error": "An error occurred"}

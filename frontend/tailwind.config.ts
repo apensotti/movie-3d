@@ -50,6 +50,8 @@ const config: Config = {
   			'110': '32rem'
   		},
   		colors: {
+			'neutral-850': '#222222',
+			'neutral-875': '#202020',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

@@ -6,4 +6,4 @@ cd /home/alexp/src/movie-3d
 docker-compose down
 
 # Build and run docker-compose
-docker-compose up --build backend nginx
+docker-compose up --build
