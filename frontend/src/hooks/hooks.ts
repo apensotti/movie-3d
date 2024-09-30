@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { GraphData, omdb } from "@/data/types";
+import React, { useEffect, useState } from "react";
+import { GraphData, omdb, Messages } from "@/data/types";
 
 // Custom hook for loading the query from localStorage
 export const useLoadQueryFromLocalStorage = (setQuery: React.Dispatch<React.SetStateAction<string>>) => {
@@ -76,17 +76,18 @@ export const useFetchMovies = (ids: string[], OMBDAPI: string, OMBDKEY: string, 
 };
 
 // Custom hook for saving the query to the server with debouncing
-export const useSaveQueryToServer = (query: string, MWAPI: string) => {
+export const useChat = (query: string, MWAPI: string, setMessages: React.Dispatch<React.SetStateAction<Messages[]>>) => {
   useEffect(() => {
     const saveQueryToServer = async () => {
       try {
         const response = await fetch(`${MWAPI}/chat/`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ content: query, role: "user" }),
+          body: JSON.stringify({ messages: [{content: query}], email: "alexpensotti@gmail.com", session_id: "" }),
         });
         if (!response.ok) throw new Error("Failed to save query");
-        console.log("Query saved successfully:", await response.json());
+        const data = await response.json();
+        setMessages(data);
       } catch (error) {
         console.error("Error saving query:", error);
       }
@@ -96,5 +97,5 @@ export const useSaveQueryToServer = (query: string, MWAPI: string) => {
       const timer = setTimeout(() => saveQueryToServer(), 500); // Debouncing for 500ms
       return () => clearTimeout(timer); // Clear the timeout on cleanup
     }
-  }, [query, MWAPI]);
+  }, [query, MWAPI, setMessages]);
 };

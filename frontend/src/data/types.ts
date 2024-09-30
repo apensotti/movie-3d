@@ -64,6 +64,12 @@ export interface omdb{
   Website:string,
   Response:string}
 
-  export interface ChatMessage {
+  export interface Messages {
+    additional_kwargs?: any;
+    example?: boolean;
+    id?: string;
+    name?: string;
+    response_metadata?: any;
+    type: string;
     content: string;
   }

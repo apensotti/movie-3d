@@ -5,15 +5,24 @@ import React, { RefAttributes, useState } from 'react';
 import { SiRottentomatoes } from "react-icons/si";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi"; // Arrow icons for toggling
 import Link from 'next/link';
+import {Messages} from './ai/ChatMessages';
 import MovieCardMd from './MovieCardMd';
+import Chat from './ai/Chat';
 
 interface ContentPopupProps {
-  movies: omdb[]; 
-  children?: React.ReactNode;
+  movies?: omdb[]; 
+  messages?: {
+    type: string;
+    content : string;
+  }[];
 }
 
 
-const ContentPopup = ({ children, movies }: ContentPopupProps) => {
+interface ContentPopupProps {
+  children: React.ReactNode;
+}
+
+const ContentPopup: React.FC<ContentPopupProps> = ({ children }) => {
   const [menuToggle, setMenuToggle] = useState(false);
   const toggleMovieMenu = () => {
     setMenuToggle(!menuToggle);
@@ -31,9 +40,11 @@ const ContentPopup = ({ children, movies }: ContentPopupProps) => {
         <div
           className={`absolute left-1/2 transform -translate-x-56 w-102 h-96 bg-neutral-800 overflow-hidden rounded-2xl no-scrollbar `}>
           <div className='overflow-y-scroll w-full h-full no-scrollbar z-30'>
-            {menuToggle && movies.map((movie) => (
+            {/* {menuToggle && movies.map((movie) => (
               <MovieCardMd movie={movie} key={movie.imdbID}/>
-            ))}
+            ))} */}
+             {/* <chil messages={messages} /> */}
+             {children}
           </div>
         </div>
       </div>

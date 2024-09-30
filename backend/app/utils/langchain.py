@@ -8,6 +8,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_community.vectorstores import FAISS
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from fastapi.responses import StreamingResponse
 
 llm = ChatOpenAI(model="gpt-4o", streaming=True)
 llm_embeddings = OpenAIEmbeddings(model='text-embedding-3-small')
@@ -41,10 +42,7 @@ def faissvdb(k):
     )
     return retriever
 
-
-## Prompt Template for Chat History
-def mw_chat_chain(query: str, messages: list):
-
+def rag_chain():
     contextualize_q_system_prompt = (
         "Given a chat history and the latest user question "
         "which might reference movies in the chat history, "
@@ -91,10 +89,40 @@ def mw_chat_chain(query: str, messages: list):
 
     rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
 
+    return rag_chain
 
-    result = rag_chain.invoke({"input": query, "chat_history": messages})
+## Prompt Template for Chat History
+def mw_chat_chain(query: str, messages: list):
+
+    chain = rag_chain()
+
+    result = chain.invoke({"input": query, "chat_history": messages})
 
     messages.append(HumanMessage(content=query))
     messages.append(SystemMessage(content=result["answer"]))
 
     return messages
+
+
+class ChatRequest():
+    def __init__(self, query: str, messages: list):
+        self.messages = messages
+        self.query = query
+
+    def return_messages(self):
+        return self.messages
+
+    def mw_chat_stream(self):
+        full_message = ""
+        
+        chain = rag_chain()
+    
+        def generator():
+            for chunck in chain.stream({"input": self.query, "chat_history": self.messages}):
+                full_message += chunck["answer"]
+                yield chunck
+                
+        self.messages.append(HumanMessage(content=self.query))
+        self.messages.append(SystemMessage(content=full_message))
+    
+        return StreamingResponse(generator(), media_type='text/event-stream')

@@ -1,19 +1,28 @@
 "use client";
 
+import React from 'react';
 import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
 import Router from 'next/router';
+import { useFetchGraphData } from "@/hooks/hooks";
+
 const ForceGraph3D = dynamic(() => import('react-force-graph-3d'), { ssr: false });
 
-export default function Matrix({ nodes, links }) {
+const Matrix = ({ ids }) => {
+  const MWAPI = process.env.NEXT_PUBLIC_MWAPI;
   const labelRendererRef = useRef(null);
-  const router = Router; // Initialize Next.js router
-  const [loading, setLoading] = useState(true); // Loading state for initial load
+  const router = Router;
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState({ nodes: [], links: [] });
+
+  useFetchGraphData(ids, MWAPI, setData);
+
+  const nodes = data.nodes;
+  const links = data.links;
 
   useEffect(() => {
-    // Initialize the CSS2DRenderer on the client side
     const labelRenderer = new CSS2DRenderer();
     labelRenderer.setSize(window.innerWidth, window.innerHeight);
     labelRenderer.domElement.style.position = 'absolute';
@@ -22,42 +31,36 @@ export default function Matrix({ nodes, links }) {
     labelRendererRef.current = labelRenderer;
   }, []);
 
-  // Dynamically set the node size based on its popularity
   const nodeThreeObject = (node) => {
-    const radius = Math.max(1, Math.log(node.size + 1)); // Adjust node size based on popularity (log scale)
-    const geometry = new THREE.SphereGeometry(radius, 24, 24); // Use the radius based on popularity
-    const material = new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: false });
-    const sphere = new THREE.Mesh(geometry, material);
-    sphere.castShadow = false;
-    sphere.receiveShadow = false;
-    return sphere;
+    const radius = Math.max(1, Math.log(node.size + 1));
+    const geometry = new THREE.SphereGeometry(radius, 24, 24);
+    const material = new THREE.MeshBasicMaterial({ color: '#ffffff' });
+    return new THREE.Mesh(geometry, material);
   };
 
   const onNodeHover = (node, prevNode) => {
     if (prevNode && prevNode.__label) {
-      prevNode.__threeObj.remove(prevNode.__label); // Remove previous label
+      prevNode.__threeObj.remove(prevNode.__label);
       prevNode.__label = null;
     }
 
     if (node) {
       const nodeEl = document.createElement('div');
       nodeEl.innerHTML = `<strong>${node.title || "Unnamed"}</strong>`;
-      nodeEl.style.width = '100px';
       nodeEl.style.color = '#ffffff';
       nodeEl.style.backgroundColor = '#44403c';
       nodeEl.style.padding = '2px 5px';
       nodeEl.style.borderRadius = '3px';
 
       const label = new CSS2DObject(nodeEl);
-      label.position.set(0, 0, 0); // Attach at the node's position
-      node.__threeObj.add(label); // Add label to the node's 3D object
-      node.__label = label; // Store label reference for removal later
+      label.position.set(0, 0, 0);
+      node.__threeObj.add(label);
+      node.__label = label;
     }
   };
 
   const onNodeClick = (node) => {
     if (node && node.id) {
-      // Navigate to the movie detail page using Next.js router
       window.open(`/movies/${node.id}`, '_blank');
     }
   };
@@ -69,14 +72,14 @@ export default function Matrix({ nodes, links }) {
           <ForceGraph3D
             graphData={{ nodes, links }}
             backgroundColor="#171717"
-            nodeThreeObject={nodeThreeObject} // Use nodeThreeObject for dynamic sizing
+            nodeThreeObject={nodeThreeObject}
             linkOpacity={0.02}
             enableNodeDrag={false}
             showNavInfo={false}
             warmupTicks={23}
             cooldownTicks={10}
             onNodeHover={onNodeHover}
-            onNodeClick={onNodeClick} // Add the click handler here
+            onNodeClick={onNodeClick}
             extraRenderers={[labelRendererRef.current]}
             onEngineStop={() => setLoading(false)}
           />
@@ -89,4 +92,10 @@ export default function Matrix({ nodes, links }) {
       )}
     </div>
   );
-}
+};
+
+// Use React.memo to memoize the component
+export default React.memo(Matrix, (prevProps, nextProps) => {
+  // Only rerender if the `ids` prop changes
+  return prevProps.ids === nextProps.ids;
+});
