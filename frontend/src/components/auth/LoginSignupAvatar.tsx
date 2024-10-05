@@ -4,6 +4,7 @@ import React from 'react'
 import { AccountAvatar } from '../AccountAvatar'
 import { useSession } from 'next-auth/react';
 import LoginSignup from '../LoginSignup'
+import { Button } from '../ui/button';
 
 interface LoginSignupAvatarProps {
   session: any;
@@ -19,7 +20,9 @@ function LoginSignupAvatar({session, status, ref, onSignOut}: LoginSignupAvatarP
             {status === 'loading' ? (
               <LoginSignup />
             ) : status === "authenticated" ? (
-              <AccountAvatar imageLink={session.user?.image}/>
+              <div>
+                <AccountAvatar imageLink={session.user?.image}/>
+              </div>
             ) : (
               <LoginSignup />
             )}

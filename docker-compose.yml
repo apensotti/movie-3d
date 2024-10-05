@@ -1,7 +1,9 @@
+version: '3.8'
+
 services:
   backend:
     build:
-      context: ./backend/app
+      context: ./backend/app  # Set context to project root
       dockerfile: Dockerfile
     container_name: backend
     restart: unless-stopped
@@ -13,13 +15,15 @@ services:
       - "8000"
     networks:
       - app-network
-    environment:
-      - OPENAI_API_KEY=sk-xVDTvv4q702kF2VA1SPraYTLCOl1Oqvh2yY6e7fFZFT3BlbkFJbqvF4GRSa5vL3yscXAe_Ibw6ROlICyOhQt8Hq0D-YA
-      - MONGODB_URI=mongodb+srv://alexpensotti:9Nae0ac14Fxhfk5A@moviewizard.unp4g.mongodb.net/mw_users?retryWrites=true&w=majority&appName=MovieWizard
+    env_file:
+      - ./.env.${APP_ENV}
+
   frontend:
     build:
-      context: ./frontend
+      context: ./frontend  # Set context to project root
       dockerfile: Dockerfile
+      args:
+        - APP_ENV=${APP_ENV}
     container_name: frontend
     restart: unless-stopped
     ports:
@@ -28,15 +32,8 @@ services:
       - "3000"
     networks:
       - app-network
-    environment:
-      - NEXT_PUBLIC_MWAPI=https://www.moviewizard.com/wizapi
-      - NEXT_PUBLIC_OMBDAPI=https://www.omdbapi.com/?apikey=f523276c&plot=full  
-      - GOOGLE_CLIENT_ID=543409743576-hji2c36frodkurna8b7hhp4agsc60i33.apps.googleusercontent.com
-      - GOOGLE_CLIENT_SECRET=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
-      - NEXTAUTH_SECRET=DNYs9V+PapNsy+kRVyxyzhbuDVHNVXn5GQArzgKHO1U=      
-      - DATABASE_URL=postgresql://alex:asflkasjhajgla@localhost:5432/moviewizardusers?schema=public
-      - NEXTAUTH_URL=https://moviewizard.com/api/auth
-      
+    env_file:
+      - ./.env.${APP_ENV}
 
   nginx:
     image: nginx:latest

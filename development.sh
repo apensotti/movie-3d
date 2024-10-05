@@ -6,4 +6,4 @@ cd /home/alexp/src/movie-3d
 docker-compose down
 
 # Build and run docker-compose
-docker-compose up --build
+APP_ENV=dev docker-compose up --build

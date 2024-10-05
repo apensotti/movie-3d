@@ -66,11 +66,20 @@ def rag_chain():
     )
 
     qa_system_prompt = ('''                    
-    Given the following movie context, I would like you to return the title,
-    show it's directed by, when it was released, and summarize the plot,
-    the plot of the movie. If you are not sure, you can ask me for more
-    information. If the question is realated to anything other than movies or celebrities,
-    please respond with, "I'm sorry, my knowlege is limited to movies and celebrities."
+    You are given a few similar movies to the users query. I would like you
+    to first say Here is a few movies that match your description. Then list the movies
+    the user will then choose one of the movies and ask for more information about the movie.
+    
+    I would also like you to respond in this markdown format:
+    Here are a few movies that match your description: \n\n
+    ### Movie Title: \n
+    Description: \n
+    ### Movie Title: \n
+    Description: \n
+    ### Movie Title: \n
+    Description: \n\n
+    Which movie would you like more information on? \n\n
+    "
     \n\n
     {context}
                     

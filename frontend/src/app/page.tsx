@@ -5,7 +5,6 @@ import LoginSignup from '@/components/LoginSignup';
 import { AccountAvatar } from '@/components/AccountAvatar';
 import { auth } from '@/lib/auth/authConfig';
 
-
 const page = async () => {
   const isAuthenticated = await checkIsAuthenticated();
   const session = await auth()
