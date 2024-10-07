@@ -10,8 +10,7 @@ export interface InputProps
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, onArrowClick, ...props }, ref) => {
     return (
-    <div className="absolute bottom-5 left-72 transform -translate-x-1/2 w-100 pb-2 z-50 scale-125">
-      <div className="relative w-full">
+      <div className="relative">
         <input
           type={type}
           className={cn(
@@ -26,7 +25,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           onClick={onArrowClick}
         />
       </div>
-    </div>
     );
   }
 );

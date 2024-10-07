@@ -68,7 +68,6 @@ export const useFetchMovies = (ids: string[], OMBDAPI: string, OMBDKEY: string, 
         console.error("Error fetching movies:", error);
       }
     };
-
     if (ids.length > 0) {
       fetchMovies();
     }

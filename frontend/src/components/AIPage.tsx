@@ -15,6 +15,7 @@ import { AccountAvatar } from "@/components/AccountAvatar";
 import { useRouter } from "next/navigation";
 import { useChat } from "ai/react";
 import { Messages } from "./ai/ChatMessages";
+import { top200 } from "@/data/top200";
 
 interface AIPageProps {
   session: any;
@@ -28,12 +29,12 @@ export default function AIPage({ session }: AIPageProps) {
   const OMBDKEY = process.env.NEXT_PUBLIC_OMBDAPI_KEY!;
 
   const [query, setQuery] = useState<string>("");
-  const [ids, setIds] = useState<string[]>([
-    "tt0114709", "tt0113497", "tt0113228", "tt0114885", "tt0113041", "tt6209470", "tt2028550", "tt0303758",
-  ]);
+  const [ids, setIds] = useState<string[]>(top200);
   const [movies, setMovies] = useState<omdb[]>([]);
   const [showForceGraph, setShowForceGraph] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  console.log(setMovies)
 
   useEffect(() => {
     if (!session) {
@@ -43,7 +44,7 @@ export default function AIPage({ session }: AIPageProps) {
 
   // Using useCompletion from Vercel AI SDK
   const { messages, input, handleInputChange, handleSubmit } = useChat();
-
+  
   // Fetch movie IDs when query changes
   useFetchMovieIDs(query, MWAPI, setIds);
 
@@ -64,17 +65,19 @@ export default function AIPage({ session }: AIPageProps) {
         {showForceGraph ? <Matrix ids={ids} /> : <div>Force graph is hidden</div>}
 
         {/* Input field connected to Vercel AI SDK */}
-        <Input
-          type="text"
-          className="w-full rounded-full align-middle"
-          placeholder="Summon the Wizard..."
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) handleSubmit(); // Submit input on Enter
-          }}
-          onChange={handleInputChange}
-          value={input}
-          ref={inputRef}
-        />
+        <div className="absolute bottom-5 left-72 transform -translate-x-1/2 w-100 pb-2 z-50 scale-125">
+          <Input
+            type="text"
+            className="w-full rounded-full align-middle"
+            placeholder="Describe a movie..."
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) handleSubmit(); // Submit input on Enter
+            }}
+            onChange={handleInputChange}
+            value={input}
+            ref={inputRef}
+          />
+        </div>
 
         {/* Render ContentPopup */}
         <ContentPopup movies={movies}>

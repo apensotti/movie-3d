@@ -1,11 +1,12 @@
 import { cn } from "@/lib/utils";
 import { Bot, User } from "lucide-react";
+import React from "react";
 import { FaHatWizard } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 interface MessageProps {
-  content: string;
+  content: React.ReactNode | string;
   isUserMessage: boolean;
 }
 
@@ -43,7 +44,7 @@ export const Message = ({ content, isUserMessage }: MessageProps) => {
 
             {/* Render markdown content here */}
             <div className="text-sm font-normal py-2.5 text-white">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+              {content}
             </div>
           </div>
         </div>

@@ -23,6 +23,12 @@ def get_st_embeddings(text, model: SentenceTransformer):
     inputs = model.encode(text, convert_to_numpy=True)
     return inputs
 
+def faissvdb(k):
+    retriever = vdb.as_retriever(
+        search_type="similarity",
+        search_kwargs={"k": k},
+    )
+    return retriever
 
 ## Faiss Vector Database
 def search_movies(query, k):
@@ -33,14 +39,9 @@ def search_movies(query, k):
     for result in results:
         movies.append(result.metadata)
 
-    return movies
+    sorted_movies = sorted(movies, key=lambda x: x['popularity'], reverse=True)
+    return sorted_movies
 
-def faissvdb(k):
-    retriever = vdb.as_retriever(
-        search_type="similarity",
-        search_kwargs={"k": k},
-    )
-    return retriever
 
 def rag_chain():
     contextualize_q_system_prompt = (

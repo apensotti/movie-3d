@@ -5,6 +5,8 @@ services:
     build:
       context: ./backend/app  # Set context to project root
       dockerfile: Dockerfile
+      args:
+        - APP_ENV=${APP_ENV}
     container_name: backend
     restart: unless-stopped
     volumes:
