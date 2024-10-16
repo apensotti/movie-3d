@@ -1,13 +1,12 @@
 "use client";
 
-import { omdb } from '../data/types';
+import { omdb } from '../../data/types';
 import React, { RefAttributes, useState } from 'react';
 import { SiRottentomatoes } from "react-icons/si";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi"; // Arrow icons for toggling
 import Link from 'next/link';
-import {Messages} from './ai/ChatMessages';
-import MovieCardMd from './MovieCardMd';
-import Chat from './ai/Chat';
+import {Messages} from '../ai/ChatMessages';
+import Chat from '../ai/Chat';
 
 interface ContentPopupProps {
   movies?: omdb[]; 
@@ -29,7 +28,7 @@ const ContentPopup: React.FC<ContentPopupProps> = ({ children }) => {
   };
 
   return (
-    <div className={`absolute  bottom-16 left-60 transform translate-y-3 -translate-x-60 w-110 z-40 overflow-hidden transition-all duration-1 ${menuToggle ? 'h-100' : 'h-9'}`}>
+    <div className={`absolute bottom-16 left-60 transform translate-y-3 -translate-x-60 w-110 z-40 overflow-hidden transition-all duration-1 ${menuToggle ? 'h-100' : 'h-9'}`}>
       <div className={`absolute bottom-5 left-1/2 transform -translate-x-64 w-110 h-96 transition-transform duration-400 ease-in-out  ${menuToggle ? '-translate-y-0' : 'translate-y-full'}`}>
         <button 
           onClick={toggleMovieMenu} 
@@ -44,7 +43,11 @@ const ContentPopup: React.FC<ContentPopupProps> = ({ children }) => {
               <MovieCardMd movie={movie} key={movie.imdbID}/>
             ))} */}
              {/* <chil messages={messages} /> */}
+             {menuToggle && (
+               <>
              {children}
+               </>
+             )}
           </div>
         </div>
       </div>

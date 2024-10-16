@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { SiRottentomatoes } from "react-icons/si";
-import { omdb } from '../data/types';
+import { omdb } from '../../data/types';
 
 interface MovieCardMdProps {
     movie: omdb;

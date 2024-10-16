@@ -1,9 +1,7 @@
 import { cn } from "@/lib/utils";
-import { Bot, User } from "lucide-react";
+import { User } from "lucide-react";
 import React from "react";
 import { FaHatWizard } from "react-icons/fa";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 
 interface MessageProps {
   content: React.ReactNode | string;
@@ -42,8 +40,7 @@ export const Message = ({ content, isUserMessage }: MessageProps) => {
               </span>
             </div>
 
-            {/* Render markdown content here */}
-            <div className="text-sm font-normal py-2.5 text-white">
+            <div className="prose prose-invert max-w-none">
               {content}
             </div>
           </div>

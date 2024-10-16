@@ -3,10 +3,9 @@
 import React from 'react'
 import Link from 'next/link';
 import { BsStars } from "react-icons/bs";
-import { Button } from '../components/ui/button';
 import { useState } from 'react';
 
-const ButtonNav = () => {
+const HomeButton = () => {
   const [isMenuVisible, setIsMenuVisible] = useState(true);
 
   const toggleMenu = () => {
@@ -16,20 +15,21 @@ const ButtonNav = () => {
   return (
     <>
     <div className="relative w-14 h-14">
-      <img
-        src="/wizardlogo2xwhite.png"
-        alt="logo"
-        className="absolute top-0 left-0 w-14 h-14 z-10 cursor-pointer fade-on-hover duration-200 ease-in-out"
-        onClick={toggleMenu}
-      />
-      <img
-        src="/wizardlogo2x.png"
-        alt="logo"
-        className="absolute top-0 left-0 w-14 h-14"
-      />
+      <Link href={'/'}>
+        <img
+          src="/wizardlogo2xwhite.png"
+          alt="logo"
+          className="absolute top-0 left-0 w-14 h-14 z-10 cursor-pointer fade-on-hover duration-200 ease-in-out"
+        />
+        <img
+          src="/wizardlogo2x.png"
+          alt="logo"
+          className="absolute top-0 left-0 w-14 h-14"
+        />
+      </Link>
     </div>
 
-    {isMenuVisible && (
+    {/* {isMenuVisible && (
       <div className="flex flex-row space-x-2 transition-opacity duration-300 ease-in-out">
         <Link href={'/games'}>
           <Button className="menu-button rounded-full bg-neutral-800 hover:bg-neutral-875 w-20 h-7">
@@ -47,9 +47,9 @@ const ButtonNav = () => {
         </Button>
         </Link>
       </div>
-    )}
+    )} */}
     </>
   )
 }
 
-export default ButtonNav
+export default HomeButton

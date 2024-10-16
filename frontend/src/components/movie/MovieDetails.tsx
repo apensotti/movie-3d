@@ -6,21 +6,24 @@ import { MovieVideosProps, Video } from './MovieVideos';
 import { SiImdb } from "react-icons/si";
 import { SiRottentomatoes } from "react-icons/si";
 import { FaHatWizard } from "react-icons/fa6";
+import PosterButtons from '../component/PosterButtons';
 
 interface MovieDetailsProps {
   data: omdb;
   poster: string;
   videos: MovieVideosProps;
+  onLibraryClick: () => void;
+  onWatchlistClick: () => void;
+  inLibrary: boolean;
+  inWatchlist: boolean;
 }
 
-const MovieDetails: React.FC<MovieDetailsProps> = ({data, poster, videos}) => {
+const MovieDetails: React.FC<MovieDetailsProps> = ({data, poster, videos, onLibraryClick, onWatchlistClick, inLibrary, inWatchlist}) => {
   const [showFullPlot, setShowFullPlot] = useState(false);
 
   const togglePlot = () => {
     setShowFullPlot(!showFullPlot);
   };
-
-  console.log(data);
 
   const trailer = videos.results.find((video: Video) => video.name.toLowerCase().includes('trailer'));
   
@@ -42,7 +45,13 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({data, poster, videos}) => {
 
       {/* Movie Poster and Trailer */}
       <div className="flex gap-4">
-        <img src={poster} alt={data.Title} width={275} height={275} className="rounded-lg" />
+        <PosterButtons 
+          posterLink={poster} 
+          onLibraryClick={onLibraryClick} 
+          onWatchlistClick={onWatchlistClick} 
+          inLibrary={inLibrary}
+          inWatchlist={inWatchlist}
+        />
         <div className=''>
           {trailer ? (
             <iframe

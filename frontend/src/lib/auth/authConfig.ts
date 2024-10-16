@@ -86,4 +86,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
   },
+  useSecureCookies: false, // Set to false for local development
+  cookies: {
+    csrfToken: {
+      name: 'next-auth.csrf-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: false, // Set to false for local development
+      },
+    },
+  },
 });

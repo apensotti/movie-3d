@@ -5,7 +5,12 @@ import { openai } from '@ai-sdk/openai';
 import { ReactNode } from 'react';
 import { z } from 'zod';
 import { generateId } from 'ai';
-import MovieCardMd from '@/components/MovieCardMd';
+import MovieCardMd from '@/components/component/MovieCardMd';
+import { omdb } from '@/data/types';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
+import { formatAIResponse } from '../utils';
 
 const MWAPI = process.env.NEXT_PUBLIC_MWAPI!;
 const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI_URL!;
@@ -26,35 +31,7 @@ const getMovieData = async (ids: string[]) => {
   return movieData;
 };
 
-interface MovieProps {
-  Title: string;
-  Year: string;
-  Rated: string;
-  Released: string;
-  Runtime: string;
-  Genre: string;
-  Director: string;
-  Writer: string;
-  Actors: string;
-  Plot: string;
-  Language: string;
-  Country: string;
-  Awards: string;
-  Poster: string;
-  Ratings: [{ Source: string, Value: string }];
-  Metascore: string;
-  imdbRating: string;
-  imdbVotes: string;
-  imdbID: string;
-  Type: string;
-  DVD: string;
-  BoxOffice: string;
-  Production: string;
-  Website: string;
-  Response: string;
-}
-
-const MovieComponent = (props: MovieProps) => <MovieCardMd movie={props} />;
+const MovieComponent = (props: omdb) => <MovieCardMd movie={props} />;
 
 export interface ServerMessage {
   role: 'user' | 'assistant';
@@ -67,26 +44,36 @@ export interface ClientMessage {
   display: ReactNode;
 }
 
-// Updated: Checking if the input requires a tool or just a text response
 const isToolRequired = (input: string) => {
   return input.toLowerCase().includes('movie') || input.toLowerCase().includes('film');
 };
 
 export async function continueConversation(input: string): Promise<ClientMessage> {
-  'use server';
-
   const history = getMutableAIState();
 
-  // If the input requires a tool (e.g., movie-related query)
+  const systemPrompt = `
+    You are a movie assistant that can use tools to find movies based on descriptions and answer questions about those movies.
+    
+    Please provide detailed and structured responses. Use clear sections and subsections when appropriate. Format your responses using markdown:
+    
+    - Use # for main headings
+    - Use ## for subheadings
+    - Use - or * for bullet points
+    - Use 1. 2. 3. for numbered lists
+    - Use **text** for bold and *text* for italic
+    
+    Ensure your responses are well-structured and easy to read.
+    `;
+
   if (isToolRequired(input)) {
     const result = await streamUI({
       model: openai('gpt-4o'),
-      system:
-        "You are a movie assistant that can use tools to find movies based on descriptions and answer questions about those movies.",
+      system: systemPrompt,
       messages: [...history.get(), { role: 'user', content: input }],
       text: ({ content, done }) => {
         if (!done) {
-          return <div>{content}</div>;
+          const formattedContent = formatAIResponse(content);
+          return <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{formattedContent}</ReactMarkdown>;
         }
 
         history.done((messages: ServerMessage[]) => [
@@ -94,7 +81,8 @@ export async function continueConversation(input: string): Promise<ClientMessage
           { role: 'assistant', content },
         ]);
 
-        return <div>{content}</div>;
+        const formattedContent = formatAIResponse(content);
+        return <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{formattedContent}</ReactMarkdown>;
       },
       tools: {
         showMovies: {
@@ -103,21 +91,25 @@ export async function continueConversation(input: string): Promise<ClientMessage
             query: z.string().describe('The description of the movie.'),
           }),
           generate: async ({ query }) => {
-            history.done((messages: ServerMessage[]) => [
-              ...messages,
-              { role: 'assistant', content: `Showing movies that match the description: ${query}` },
-            ]);
-
             const ids = await searchVDB(query);
             const movies = await getMovieData(ids);
 
-            const movieComponents = movies.map((movie) => <MovieComponent {...movie} />);
+            const movieComponents = movies.map((movie) => <MovieComponent key={movie.imdbID} {...movie} />);
 
-            // After movies are shown, stream a follow-up question
+            history.done((messages: ServerMessage[]) => [
+              ...messages,
+              { role: 'assistant', content: `Here are some movies that match the description: ${query}. Would you like to know more about one of these movies?` },
+            ]);
+
             return (
               <>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm, remarkBreaks]}
+                  className="mt-2 font-light pb-2"
+                >
+                  {`Here are some movies that match the description: **${query}**. Would you like to know more about one of these movies?`}
+                </ReactMarkdown>
                 {movieComponents}
-                <div className="mt-4">Do you have any other questions?</div>
               </>
             );
           },
@@ -128,21 +120,22 @@ export async function continueConversation(input: string): Promise<ClientMessage
             title: z.string().describe('The title of the movie.'),
           }),
           generate: async ({ title }) => {
-            history.done((messages: ServerMessage[]) => [
-              ...messages,
-              { role: 'assistant', content: `Getting information about the movie: ${title}` },
-            ]);
-
             const response = await fetch(`${OMBDAPI}?t=${title}&plot=full&apikey=${OMBDKEY}`);
             const movie = await response.json();
 
             const movieComponent = <MovieComponent {...movie} />;
 
-            // After movie info, stream a follow-up question
+            history.done((messages: ServerMessage[]) => [
+              ...messages,
+              { role: 'assistant', content: `Here's information about the movie: ${title}` },
+            ]);
+
             return (
               <>
                 {movieComponent}
-                <div className="mt-4">Do you have any other questions?</div>
+                <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} className="mt-4">
+                  Do you have any other questions about this movie?
+                </ReactMarkdown>
               </>
             );
           },
@@ -156,14 +149,13 @@ export async function continueConversation(input: string): Promise<ClientMessage
       display: result.value,
     };
   } else {
-    // If the input doesn't require a tool, just stream a general response
     const result = await streamUI({
       model: openai('gpt-4o'),
-      system: "You are an assistant that can answer general questions.",
+      system: systemPrompt,
       messages: [...history.get(), { role: 'user', content: input }],
       text: ({ content, done }) => {
         if (!done) {
-          return <div>{content}</div>;
+          return <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{content}</ReactMarkdown>;
         }
 
         history.done((messages: ServerMessage[]) => [
@@ -172,10 +164,9 @@ export async function continueConversation(input: string): Promise<ClientMessage
         ]);
 
         return (
-          <>
-            <div>{content}</div>
-            <div className="mt-4">Do you have any other questions?</div>
-          </>
+          <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} className='font-light'>
+            {content}
+          </ReactMarkdown>
         );
       },
     });

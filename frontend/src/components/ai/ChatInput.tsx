@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { Send } from "lucide-react";
 import { type useChat } from "ai/react";
+import { FaSliders } from "react-icons/fa6";
 
 type HandleInputChange = ReturnType<typeof useChat>["handleInputChange"];
 type HandleSubmit = ReturnType<typeof useChat>["handleSubmit"];
@@ -44,6 +45,9 @@ export const ChatInput = ({ handleInputChange, handleSubmit, input, setInput }: 
                 className="absolute z-10 border border-border bg-zinc-900 right-2 bottom-2"
               >
                 <Send className="size-4" />
+              </Button>
+              <Button>
+                <FaSliders></FaSliders>
               </Button>
             </form>
           </div>

@@ -1,30 +1,30 @@
 "use client"
 
 import React from 'react'
-import { AccountAvatar } from '../AccountAvatar'
+import { AccountAvatar } from '../component/AccountAvatar'
 import { useSession } from 'next-auth/react';
-import LoginSignup from '../LoginSignup'
+import LoginSignup from './LoginSignup'
 import { Button } from '../ui/button';
+import { CgMenuGridO } from "react-icons/cg";
 
 interface LoginSignupAvatarProps {
   session: any;
-  status: string;
-  ref: React.RefObject<string>;
+  status?: string;
   onSignOut?: () => void;
 }
 
-function LoginSignupAvatar({session, status, ref, onSignOut}: LoginSignupAvatarProps) {
+function LoginSignupAvatar({session, status, onSignOut}: LoginSignupAvatarProps) {
 
     return (
         <div className="absolute top-6 right-6 z-50">
-            {status === 'loading' ? (
-              <LoginSignup />
-            ) : status === "authenticated" ? (
-              <div>
+            {session ? (
+              <div className='flex flex-row gap-5 items-center'>
                 <AccountAvatar imageLink={session.user?.image}/>
               </div>
             ) : (
-              <LoginSignup />
+              <div>
+                <LoginSignup />
+              </div>
             )}
         </div>
   )

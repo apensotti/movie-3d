@@ -1,7 +1,10 @@
 def user_serialization(user) -> dict:
     return {
         "email": user.email,
-        "password": user.password
+        "password": user.password,
+        "library": user.library,
+        "watchlist": user.watchlist
+
     }
 
 def message_serialization(message) -> dict:

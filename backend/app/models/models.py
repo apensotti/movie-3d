@@ -18,6 +18,8 @@ class user(BaseModel):
     password: str
     email: str
     image: str
+    library: list[str]
+    watchlist: list[str]
 
 class ChatRequest(BaseModel):
     messages: list[dict]
