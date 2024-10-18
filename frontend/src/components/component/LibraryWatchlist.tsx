@@ -107,17 +107,25 @@ export default function LibraryWatchlist() {
 
     return (
         <div className="h-full flex flex-col">
-            <div className="flex">
+            <div className="flex relative">
                 <button
-                    className={`flex-1 py-2 px-4 text-center rounded-t-xl flex items-center justify-center ${activeTab === 'library' ? 'bg-violet-800 text-white' : 'bg-neutral-850'} shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]`}
+                    className={`flex-1 py-2 px-4 text-center rounded-t-xl flex items-center justify-center ${activeTab === 'library' ? 'bg-violet-800 text-white z-10' : 'bg-neutral-850'} shadow-lg relative`}
                     onClick={() => setActiveTab('library')}
+                    style={{
+                        clipPath: 'inset(-5px -5px 0px -5px)',
+                        marginRight: '-10px'
+                    }}
                 >
                     <IoLibrary className="mr-2" />
                     Library
                 </button>
                 <button
-                    className={`flex-1 py-2 px-4 text-center rounded-t-xl flex items-center justify-center ${activeTab === 'watchlist' ? 'bg-violet-800 text-white' : 'bg-neutral-850'} shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]`}
+                    className={`flex-1 py-2 px-4 text-center rounded-t-xl flex items-center justify-center ${activeTab === 'watchlist' ? 'bg-violet-800 text-white z-10' : 'bg-neutral-850'} shadow-lg relative`}
                     onClick={() => setActiveTab('watchlist')}
+                    style={{
+                        clipPath: 'inset(-5px -5px 0px -5px)',
+                        marginLeft: '-10px'
+                    }}
                 >
                     <FaStar className="mr-2" />
                     Watchlist
@@ -130,17 +138,19 @@ export default function LibraryWatchlist() {
                     </div>
                 ) : (
                     <div className="overflow-y-auto h-full no-scrollbar">
-                        <div className="grid grid-cols-6 gap-2 pb-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-2 pb-4">
                             {(activeTab === 'library' ? libraryMovies : watchlistMovies).map(imdbID => (
-                                <div key={imdbID} className="w-full aspect-[2/3]">
+                                <div key={imdbID} className="w-full pb-[150%] relative">
                                     {moviePosters[imdbID] && (
-                                        <PosterButtons
-                                            posterLink={moviePosters[imdbID]}
-                                            onLibraryClick={() => handleLibraryClick(imdbID)}
-                                            onWatchlistClick={() => handleWatchlistClick(imdbID)}
-                                            inLibrary={libraryMovies.includes(imdbID)}
-                                            inWatchlist={watchlistMovies.includes(imdbID)}
-                                        />
+                                        <div className="absolute inset-0">
+                                            <PosterButtons
+                                                posterLink={moviePosters[imdbID]}
+                                                onLibraryClick={() => handleLibraryClick(imdbID)}
+                                                onWatchlistClick={() => handleWatchlistClick(imdbID)}
+                                                inLibrary={libraryMovies.includes(imdbID)}
+                                                inWatchlist={watchlistMovies.includes(imdbID)}
+                                            />
+                                        </div>
                                     )}
                                 </div>
                             ))}
