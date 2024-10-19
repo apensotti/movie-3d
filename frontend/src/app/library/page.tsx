@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { ChatInterface } from "@/components/ai/ChatInterface";
 import LibraryWatchlist from "../../components/component/LibraryWatchlist";
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
@@ -10,6 +11,12 @@ import "../globals.css"
 export default function Page() {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [activeInterface, setActiveInterface] = useState<'chat' | 'search'>('chat');
+    const searchParams = useSearchParams();
+    const [initialActiveTab, setInitialActiveTab] = useState<'library' | 'watchlist'>('library');
+
+    useEffect(() => {
+        setInitialActiveTab(searchParams.get('w') === '1' ? 'watchlist' : 'library');
+    }, [searchParams]);
 
     const toggleInterface = () => {
         setActiveInterface(prev => prev === 'chat' ? 'search' : 'chat');
@@ -26,7 +33,7 @@ export default function Page() {
             </div>
             <div className="flex h-screen relative px-10 pt-24 pb-12">
                 <div className={`transition-all duration-300 ease-in-out ${isChatOpen ? 'w-[50%]' : 'w-full'} h-full overflow-hidden z-20 shadow-lg`}>
-                    <LibraryWatchlist />
+                    <LibraryWatchlist initialActiveTab={initialActiveTab} />
                 </div>
                 <div className={`absolute top-24 right-9 h-[calc(100%-7rem)] transition-all duration-300 ease-in-out ${isChatOpen ? 'w-1/2' : 'w-0'} overflow-hidden z-10 pb-8`}>
                     <div className="h-full flex flex-col relative">

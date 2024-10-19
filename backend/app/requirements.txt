@@ -17,3 +17,4 @@ langsmith>=0.1.121
 pydantic
 pymongo[srv]==4.5.0
 motor==3.3.1
+elasticsearch

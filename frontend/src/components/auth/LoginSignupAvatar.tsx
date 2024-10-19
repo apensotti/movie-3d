@@ -16,9 +16,9 @@ interface LoginSignupAvatarProps {
 function LoginSignupAvatar({session, status, onSignOut}: LoginSignupAvatarProps) {
 
     return (
-        <div className="absolute top-6 right-6 z-50">
+        <div className="absolute top-6 right-6 z-50 ">
             {session ? (
-              <div className='flex flex-row gap-5 items-center'>
+              <div className='flex flex-row gap-5 items-center '>
                 <AccountAvatar imageLink={session.user?.image}/>
               </div>
             ) : (

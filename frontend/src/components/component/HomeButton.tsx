@@ -14,17 +14,17 @@ const HomeButton = () => {
 
   return (
     <>
-    <div className="relative w-14 h-14">
+    <div className="relative w-12 h-12">
       <Link href={'/'}>
         <img
           src="/wizardlogo2xwhite.png"
           alt="logo"
-          className="absolute top-0 left-0 w-14 h-14 z-10 cursor-pointer fade-on-hover duration-200 ease-in-out"
+          className="absolute top-0 left-0 w-12 h-12 z-10 cursor-pointer fade-on-hover duration-200 ease-in-out"
         />
         <img
           src="/wizardlogo2x.png"
           alt="logo"
-          className="absolute top-0 left-0 w-14 h-14"
+          className="absolute top-0 left-0 w-12 h-12"
         />
       </Link>
     </div>

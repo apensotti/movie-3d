@@ -6,18 +6,30 @@ import { Loader2 } from "lucide-react";
 import PosterButtons from './PosterButtons';
 import { IoLibrary } from "react-icons/io5";
 import { FaStar } from "react-icons/fa";
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const MWAPI = process.env.NEXT_PUBLIC_MWAPI!;
 const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI_URL;
 const OMDB_API_KEY = process.env.NEXT_PUBLIC_OMBDAPI_KEY;
 
-export default function LibraryWatchlist() {
-    const [activeTab, setActiveTab] = useState('library');
+interface LibraryWatchlistProps {
+  initialActiveTab?: 'library' | 'watchlist';
+}
+
+export default function LibraryWatchlist({ initialActiveTab = 'library' }: LibraryWatchlistProps) {
+    const [activeTab, setActiveTab] = useState(initialActiveTab);
     const [libraryMovies, setLibraryMovies] = useState<string[]>([]);
     const [watchlistMovies, setWatchlistMovies] = useState<string[]>([]);
     const [moviePosters, setMoviePosters] = useState<{ [key: string]: string }>({});
     const [isLoading, setIsLoading] = useState(true);
     const { data: session } = useSession();
+    const router = useRouter();
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        const tab = searchParams.get('w') === '1' ? 'watchlist' : 'library';
+        setActiveTab(tab);
+    }, [searchParams]);
 
     useEffect(() => {
         const fetchMovies = async () => {
@@ -105,12 +117,19 @@ export default function LibraryWatchlist() {
         }
     };
 
+    const handleTabChange = (tab: 'library' | 'watchlist') => {
+        setActiveTab(tab);
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('w', tab === 'watchlist' ? '1' : '0');
+        router.push(`/library?${params.toString()}`);
+    };
+
     return (
         <div className="h-full flex flex-col">
             <div className="flex relative">
                 <button
                     className={`flex-1 py-2 px-4 text-center rounded-t-xl flex items-center justify-center ${activeTab === 'library' ? 'bg-violet-800 text-white z-10' : 'bg-neutral-850'} shadow-lg relative`}
-                    onClick={() => setActiveTab('library')}
+                    onClick={() => handleTabChange('library')}
                     style={{
                         clipPath: 'inset(-5px -5px 0px -5px)',
                         marginRight: '-10px'
@@ -121,7 +140,7 @@ export default function LibraryWatchlist() {
                 </button>
                 <button
                     className={`flex-1 py-2 px-4 text-center rounded-t-xl flex items-center justify-center ${activeTab === 'watchlist' ? 'bg-violet-800 text-white z-10' : 'bg-neutral-850'} shadow-lg relative`}
-                    onClick={() => setActiveTab('watchlist')}
+                    onClick={() => handleTabChange('watchlist')}
                     style={{
                         clipPath: 'inset(-5px -5px 0px -5px)',
                         marginLeft: '-10px'

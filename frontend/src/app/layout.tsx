@@ -22,11 +22,11 @@ export default async function RootLayout({
         <body className={inter.className}>
           <AuthProvider session={session}>
             <AI>
-            <div className="absolute top-0 left-4 z-50 flex flex-row items-center w-96 h-24 space-x-3">
-              <HomeButton />
-            </div>
-            <LoginSignupAvatar session={session}/>
-                {children}
+              <div className="absolute -top-2 left-4 z-50 flex flex-row items-center w-96 h-24 ">
+                <HomeButton />
+              </div>
+              <LoginSignupAvatar session={session}/>
+              {children}
             </AI>
           </AuthProvider>
         </body>

@@ -33,7 +33,7 @@ const PosterButtons: React.FC<PosterButtonsProps> = ({
       <img
         src={posterLink}
         alt="Movie Poster"
-        className="w-full h-full object-cover rounded-lg"
+        className="w-full h-full object-cover rounded-lg shadow-lg"
       />
       {isHovered && (
         <div className="absolute inset-0 bg-neutral-800 bg-opacity-75 flex items-center justify-center rounded-lg transition-opacity duration-300">

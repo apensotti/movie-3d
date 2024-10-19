@@ -175,15 +175,15 @@ body {
 
 .background span:nth-child(1) {
   background-color: #78350f;  /* bg-orange-900 */
-  left: 10%;
-  animation-delay: -10s;
+  left: 15%;
+  animation-delay: -5s;
   opacity: 0.08;
 }
 
 .background span:nth-child(2) {
   background-color: #4c1d95;  /* bg-violet-900 */
-  right: 10%;
-  animation-delay: -20s;
+  right: 15%;
+  animation-delay: 5s;
   opacity: 0.08;
 }
 
