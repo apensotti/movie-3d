@@ -1,4 +1,3 @@
-
 services:
   backend:
     build:
@@ -50,7 +49,27 @@ services:
     networks:
       - app-network
 
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: alex
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: movies
+    volumes:
+      - mysqldata:/var/lib/mysql
+      - ./mysql/movies.csv:/var/lib/mysql-files/movies.csv  # Mount CSV to secure_file_priv directory
+    ports:
+      - "3307:3306"
+    networks:
+      - app-network
+
 networks:
   app-network:
     name: movie-3d_app-network
     driver: bridge
+
+volumes:
+  mysqldata:

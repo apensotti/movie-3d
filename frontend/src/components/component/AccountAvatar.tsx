@@ -81,9 +81,11 @@ export function AccountAvatar({imageLink}: AccountAvatarProps) {
             </DropdownMenuGroup>
             <DropdownMenuGroup className='flex flex-row gap-3 p-2 justify-center'>
               <DropdownMenuItem className='gap-2 hover:bg-transparent focus:bg-transparent'>
-                <Button className="rounded-full bg-violet-900 p-2 w-10 h-10 flex items-center justify-center hover:bg-orange-500">
-                  <PiJoystickFill className='text-xl text-white'/>
-                </Button>
+                <Link href={"/games"} className='hover:bg-transparent rounded-full'>
+                  <Button className="rounded-full bg-violet-900 p-2 w-10 h-10 flex items-center justify-center hover:bg-orange-500">
+                    <PiJoystickFill className='text-xl text-white'/>
+                  </Button>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className='gap-2 hover:bg-transparent focus:bg-transparent'>
                 <Button className="rounded-full bg-violet-900 p-2 w-10 h-10 flex items-center justify-center hover:bg-orange-500">

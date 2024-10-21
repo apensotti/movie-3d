@@ -8,6 +8,8 @@ interface PosterButtonsProps {
   onWatchlistClick: () => void;
   inLibrary: boolean;
   inWatchlist: boolean;
+  width?: number | string;
+  height?: number | string;
 }
 
 const PosterButtons: React.FC<PosterButtonsProps> = ({ 
@@ -15,13 +17,16 @@ const PosterButtons: React.FC<PosterButtonsProps> = ({
   onLibraryClick, 
   onWatchlistClick, 
   inLibrary,
-  inWatchlist
+  inWatchlist,
+  width = '100%',
+  height = '100%'
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
     <div 
-      className="relative w-full h-full"
+      className="relative"
+      style={{ width, height }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

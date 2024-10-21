@@ -51,6 +51,8 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({data, poster, videos, onLibr
           onWatchlistClick={onWatchlistClick} 
           inLibrary={inLibrary}
           inWatchlist={inWatchlist}
+          height={450}
+          width={300}
         />
         <div className=''>
           {trailer ? (

@@ -26,7 +26,7 @@ export const Messages = ({ messages }: MessagesProps) => {
           );
         })
       ) : (
-        <div className="flex-1 flex flex-col items-center justify-center gap-2 translate-y-16">
+        <div className="flex-1 flex flex-col items-center justify-center gap-2 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full">
           <MessageSquare className="size-8 text-orange-500" />
           <h3 className="font-semibold text-xl text-white">You're all set!</h3>
           <p className="text-zinc-500 text-sm">Ask your first question to get started.</p>
