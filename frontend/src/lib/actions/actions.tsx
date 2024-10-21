@@ -10,7 +10,6 @@ import { omdb, MovieDatabase } from '@/data/types';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
-import { formatAIResponse } from '../utils';
 import PaginatedMovieList from '@/components/PaginatedMovieList';
 
 const MWAPI = process.env.NEXT_PUBLIC_MWAPI!;
