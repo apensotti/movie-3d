@@ -10,11 +10,15 @@ import { omdb, MovieDatabase } from '@/data/types';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
-import PaginatedMovieList from '@/components/PaginatedMovieList';
+import MovieCardSm from '@/components/component/MovieCardSm';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const MWAPI = process.env.NEXT_PUBLIC_MWAPI!;
 const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI_URL!;
 const OMBDKEY = process.env.NEXT_PUBLIC_OMBDAPI_KEY!;
+const TMDB = process.env.NEXT_PUBLIC_TMDB!;
+const TMDBKEY = process.env.NEXT_PUBLIC_TMDB_KEY!;
+const TMDBIMAGEURL = process.env.NEXT_PUBLIC_TMDB_IMAGE_URL!;
 
 const searchVDB = async (query: string) => {
   const response = await fetch(`${MWAPI}/search/similarity/?query=${encodeURIComponent(query)}&k=5`);
@@ -28,7 +32,19 @@ const getMovieData = async (ids: string[]) => {
     return response.json();
   });
   const movieData = await Promise.all(moviePromises);
+  console.log(movieData);
   return movieData;
+};
+
+const searchActor = async (name: string) => {
+  const response = await fetch(`${TMDB}/search/person?query=${encodeURIComponent(name)}&api_key=${TMDBKEY}`);
+  const data = await response.json();
+  return data.results[0]; // Assuming we want the first result
+};
+
+const getActorImage = async (poster_path: string) => {
+  const imageUrl = `${TMDBIMAGEURL}${poster_path}`;
+  return imageUrl; // Return the full image URL instead of fetching it
 };
 
 // const MovieComponent = (props: omdb | MovieDatabase) => <MovieCardMd movies={props} />;
@@ -83,6 +99,8 @@ export async function continueConversation(input: string): Promise<ClientMessage
           const ids = await searchVDB(query);
           const movies = await getMovieData(ids);
 
+          console.log(movies);
+
           history.done((messages: ServerMessage[]) => [
             ...messages,
             { role: 'assistant', content: `Here are some movies that match the description: ${query}. Would you like to know more about one of these movies?` },
@@ -96,7 +114,7 @@ export async function continueConversation(input: string): Promise<ClientMessage
               >
                 {`Here are some movies that match the description: **${query}**. Would you like to know more about one of these movies?`}
               </ReactMarkdown>
-              <PaginatedMovieList movies={movies} itemsPerPage={4} />
+              <MovieCardMd movies={movies}/>
             </>
           );
         },
@@ -112,7 +130,7 @@ export async function continueConversation(input: string): Promise<ClientMessage
           crew: z.array(z.string()).optional().describe('Crew of a movie'),
         }),
         generate: async ({ title, keywords, startDate, endDate, cast, crew }) => {
-          let url = `${MWAPI}/search/movies/?page=1&limit=10`;
+          let url = `${MWAPI}/search/movies/?`;
 
           if (title) {
             url += `title=${encodeURIComponent(title)}`;
@@ -125,9 +143,11 @@ export async function continueConversation(input: string): Promise<ClientMessage
           }
           if (cast && cast.length > 0) {
             url += `&cast=${encodeURIComponent(cast.join(','))}`;
+
           }
           if (crew && crew.length > 0) {
             url += `&crew=${encodeURIComponent(crew.join(','))}`;
+            
           }
 
           console.log(url);
@@ -160,6 +180,60 @@ export async function continueConversation(input: string): Promise<ClientMessage
               </ReactMarkdown>
               <MovieCardMd movies={movies} />
             </>
+          );
+        },
+      },
+      getActorInfo: {
+        description: 'Get information about an actor, including their image and movies. If the user inputs just a single actors name use this tool.',
+        parameters: z.object({
+          name: z.string().describe('The name of the actor to search for.'),
+        }),
+        generate: async ({ name }) => {
+          const actor = await searchActor(name);
+          if (!actor) {
+            return <div>No actor found with that name.</div>;
+          }
+
+          const imageUrl = actor.profile_path ? await getActorImage(actor.profile_path) : null;
+
+          // Search for movies with the actor
+          const response = await fetch(`${MWAPI}/search/movies/?cast=${encodeURIComponent(actor.name)}`);
+          const actorMovies = await response.json();
+          const movies = await getMovieData(actorMovies);
+
+          history.done((messages: ServerMessage[]) => [
+            ...messages,
+            { role: 'assistant', content: `Here's some information about ${actor.name}:` },
+          ]);
+
+          return (
+            <div className="flex flex-col gap-6 mt-4">
+              {/* <ReactMarkdown
+                remarkPlugins={[remarkGfm, remarkBreaks]}
+                className="mt-2 font-light pb-2"
+              >
+                {`Here's some information about **${actor.name}**:`}
+              </ReactMarkdown> */}
+              <div className="flex items-start \\ gap-8">
+                {imageUrl && <img src={imageUrl} width={200} alt={actor.name} className=" h-auto rounded-lg mr-6" />}
+                <div className="flex flex-col gap-6 ml-6">
+                  <h1 className="text-3xl font-bold mb-4">{actor.name}</h1>
+                  <ul className="space-y-2">
+                    <li><span className="font-semibold">Known for:</span> {actor.known_for_department}</li>
+                    <li><span className="font-semibold">Popularity:</span> {actor.popularity}</li>
+                    <li><span className="font-semibold">Notable works:</span> {actor.known_for.map((work: any) => work.title || work.name).join(', ')}</li>
+                  </ul>
+                </div>
+              </div>
+              <Accordion type="single" collapsible className="w-full mt-6">
+                <AccordionItem value="item-1" className="border-none">
+                  <AccordionTrigger className="text-lg font-bold bg-neutral-900 rounded-2xl px-4 mb-4">Movies</AccordionTrigger>
+                  <AccordionContent className="border-none pb-4">
+                    <MovieCardSm movies={movies} />
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
           );
         },
       },

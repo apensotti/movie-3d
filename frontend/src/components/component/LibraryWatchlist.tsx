@@ -138,11 +138,11 @@ export default function LibraryWatchlist() {
                     </div>
                 ) : (
                     <div className="overflow-y-auto h-full no-scrollbar">
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-2 pb-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4 pb-4 px-4">
                             {(activeTab === 'library' ? libraryMovies : watchlistMovies).map(imdbID => (
                                 <div key={imdbID} className="w-full pb-[150%] relative">
                                     {moviePosters[imdbID] && (
-                                        <div className="absolute inset-0">
+                                        <div className="absolute inset-0 shadow-md">
                                             <PosterButtons
                                                 posterLink={moviePosters[imdbID]}
                                                 onLibraryClick={() => handleLibraryClick(imdbID)}

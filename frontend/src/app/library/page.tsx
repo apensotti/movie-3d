@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChatInterface } from "@/components/ai/ChatInterface";
+import { ChatInterface } from "@/components/ai/ChatInterface2";
 import LibraryWatchlist from "../../components/component/LibraryWatchlist";
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { BsChatDots, BsSearch } from 'react-icons/bs';
@@ -24,7 +24,7 @@ export default function Page() {
                 <span></span>
                 <span></span>
             </div>
-            <div className="flex h-screen relative px-10 pt-24 pb-12">
+            <div className="flex h-screen relative px-10 pt-24 pb-12 ">
                 <div className={`transition-all duration-300 ease-in-out ${isChatOpen ? 'w-[50%]' : 'w-full'} h-full overflow-hidden z-20 shadow-lg`}>
                     <LibraryWatchlist />
                 </div>

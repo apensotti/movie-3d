@@ -17,12 +17,7 @@ def search_mysql(
     keywords: list[str] = Query(default=[]),
     cast: list[str] = Query(default=[]),
     crew: list[str] = Query(default=[]),
-    date_range: list[str] = Query(default=[]),
-    page: int = 1,
-    limit: int = 10
+    date_range: list[str] = Query(default=[])
 ):
-    if page < 1 or limit < 1:
-        raise HTTPException(status_code=400, detail="Page and limit must be positive integers.")
-    
-    results = search_movies_in_mysql(title, keywords, cast, crew, date_range, page, limit)
+    results = search_movies_in_mysql(title, keywords, cast, crew, date_range)
     return results

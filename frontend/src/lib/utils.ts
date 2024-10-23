@@ -33,3 +33,35 @@ export function formatAIResponse(content: string): string {
   // Join the formatted paragraphs with newlines
   return formattedParagraphs.join('\n\n');
 }
+
+export function calculateAge(birthday: Date): number {
+  const today = new Date();
+  let age = today.getFullYear() - birthday.getFullYear();
+  const monthDiff = today.getMonth() - birthday.getMonth();
+  
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthday.getDate())) {
+    age--;
+  }
+  
+  return age;
+}
+
+export function convertMetersToFeetAndInches(heightInMeters: number): string {
+  const totalInches = heightInMeters * 39.3701;
+  const feet = Math.floor(totalInches / 12);
+  const inches = Math.round(totalInches % 12);
+
+  return `${feet}' ${inches}"`;
+}
+
+export function formatCurrency(amount: number): string {
+  if (amount >= 1000000000) {
+    return `$${(amount / 1000000000).toFixed(1)}B`;
+  } else if (amount >= 1000000) {
+    return `$${(amount / 1000000).toFixed(0)}M`;
+  } else if (amount >= 1000) {
+    return `$${amount.toLocaleString()}`;
+  } else {
+    return `$${amount}`;
+  }
+}

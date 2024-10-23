@@ -53,7 +53,7 @@ def generate_graph_data(ids=None):
 
     return {"nodes": nodes, "links": links}
 
-def search_movies_in_mysql(title='', keywords=[], cast=[], crew=[], date_range=[], page=1, limit=10):
+def search_movies_in_mysql(title='', keywords=[], cast=[], crew=[], date_range=[]):
     # Establish a connection to the MySQL database
     connection = mysql.connector.connect(
         host="mysql",
@@ -89,9 +89,6 @@ def search_movies_in_mysql(title='', keywords=[], cast=[], crew=[], date_range=[
 
     if conditions:
         sql2 += ' WHERE ' + ' AND '.join(conditions)
-    
-    offset = (page - 1) * limit
-    sql2 += f' LIMIT {limit} OFFSET {offset}'
     
     cursor.execute(sql2)
     results = cursor.fetchall()
