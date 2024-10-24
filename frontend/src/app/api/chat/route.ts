@@ -12,6 +12,7 @@ import remarkBreaks from 'remark-breaks';
 import MovieCardSm from '@/components/component/MovieCardSm';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { tools } from '@/components/ai/tools';
+import { unstable_noStore as noStore } from 'next/cache';
 
 const MWAPI = process.env.NEXT_PUBLIC_MWAPI!;
 const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI_URL!;
@@ -20,7 +21,8 @@ const TMDB = process.env.NEXT_PUBLIC_TMDB!;
 const TMDBKEY = process.env.NEXT_PUBLIC_TMDB_KEY!;
 const TMDBIMAGEURL = process.env.NEXT_PUBLIC_TMDB_IMAGE_URL!;
 
-
+export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
 
 // const MovieComponent = (props: omdb | MovieDatabase) => <MovieCardMd movies={props} />;
 
@@ -36,6 +38,7 @@ export interface ClientMessage {
 }
 
 export async function POST(request: Request) {
+  noStore();
   const { messages } = await request.json();
 
   const systemPrompt = `
@@ -56,16 +59,14 @@ export async function POST(request: Request) {
     model: openai('gpt-4o-mini'),
     system: systemPrompt,
     messages: convertToCoreMessages(messages),
-    onFinish(event) {
-      console.log(event);
-    },
-    onStepFinish(event) {
-      console.log(event);
-    },
     tools,
     temperature: 0.9,
-    maxSteps: 2
+    maxSteps: 2,
+    experimental_telemetry: {
+      isEnabled: true,
+      functionId: "stream-text",
+    },
   });
 
-  return result.toDataStreamResponse();
+  return result.toDataStreamResponse({});
 }

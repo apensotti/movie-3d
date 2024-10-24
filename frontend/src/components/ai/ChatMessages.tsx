@@ -11,10 +11,12 @@ interface MessagesProps {
 }
 
 export const Messages = ({ messages, logging, isLoading }: MessagesProps) => {
+  console
   return (
     <div className="flex max-h-[calc(100vh-3.5rem-7rem)] flex-1 flex-col overflow-y no-scrollbar">
       {messages && messages.length ? (
         messages.map((message, i) => {
+
           return (
             <>
               <Message

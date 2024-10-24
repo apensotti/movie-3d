@@ -7,6 +7,10 @@ import { useChat } from 'ai/react';
 import { generateId } from 'ai';
 import { Input } from '@/components/ui/input';
 import { Messages } from '@/components/ai/ChatMessages';
+import { AI } from './ai';
+import { unstable_noStore as noStore } from 'next/cache';
+export const maxDuration = 30;
+export const dynamic = 'force-dynamic';
 
 interface ChatInterfaceProps {
   className?: string;
@@ -14,6 +18,7 @@ interface ChatInterfaceProps {
 }
 
 export function ChatInterface({ className = '', inputScale = 1 }: ChatInterfaceProps) {
+  noStore();
   const [logging, setLogging] = useState('thinking...');
   const [toolLogging, setToolLogging] = useState(false);
   const prevLoggingRef = useRef(logging);
@@ -27,13 +32,13 @@ export function ChatInterface({ className = '', inputScale = 1 }: ChatInterfaceP
       const newLogging = toolCall.toolCall.toolName;
       if (newLogging !== prevLoggingRef.current) {
         if (newLogging === 'getActorInfo') {
-          setLogging('getting actor info...');
+          setLogging('getting actor info');
         } else if (newLogging === 'searchMovies') {
-          setLogging('searching movies...');
+          setLogging('searching movies');
         } else if (newLogging === 'getMovieReview') {
-          setLogging('getting movie review...');
+          setLogging('getting movie review');
         } else if (newLogging === 'describeMovie') {
-          setLogging('searching similar movies...');
+          setLogging('searching similar movies');
         } else {
           setLogging(newLogging);
         }
@@ -48,6 +53,8 @@ export function ChatInterface({ className = '', inputScale = 1 }: ChatInterfaceP
     //   console.log(event);
     // },
   });
+
+  
 
   useEffect(() => {
     prevLoggingRef.current = logging;

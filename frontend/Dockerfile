@@ -1,14 +1,16 @@
 # Stage 1: Build the Next.js app
-FROM node:18 AS builder
+FROM node:21 AS builder
 
 # Set the working directory
 WORKDIR /app
 
 # Copy package.json and package-lock.json (or yarn.lock if you're using yarn)
-COPY package.json package-lock.json ./
+COPY package.json pnpm-lock.yaml ./
+
+RUN npm install -g pnpm
 
 # Install dependencies
-RUN npm install
+RUN pnpm install
 
 # Install required packages (Debian-based)
 RUN apt-get update && \
@@ -26,10 +28,10 @@ RUN apt-get update && \
 COPY . .
 
 # Build the Next.js app
-RUN npm run build
+RUN pnpm run build
 
 # Stage 2: Serve the Next.js app in production
-FROM node:18
+FROM node:21
 
 # Set the working directory
 WORKDIR /app
@@ -37,8 +39,11 @@ WORKDIR /app
 # Copy the built app from the builder stage
 COPY --from=builder /app .
 
+# Install pnpm
+RUN npm install -g pnpm
+
 # Install production dependencies only
-RUN npm install --production
+RUN pnpm install --production
 
 # Expose the port
 EXPOSE 3000

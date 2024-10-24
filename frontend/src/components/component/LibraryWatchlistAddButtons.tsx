@@ -25,7 +25,7 @@ const LibraryWatchlistAddButtons: React.FC<LibraryWatchlistAddButtonsProps> = ({
             <Button
               onClick={onLibraryClick}
               className={`rounded-full p-1.5 w-8 h-8 flex items-center justify-center ${
-                inLibrary ? 'bg-neutral-800' : 'bg-neutral-800 hover:bg-violet-600'
+                inLibrary ? 'bg-violet-600' : 'bg-neutral-800 hover:bg-neutral-800'
               }`}
             >
               <IoLibrary className={`text-base ${inLibrary ? 'text-yellow-400' : 'text-white'} hover:text-yellow-400`} />
@@ -43,7 +43,7 @@ const LibraryWatchlistAddButtons: React.FC<LibraryWatchlistAddButtonsProps> = ({
             <Button
               onClick={onWatchlistClick}
               className={`rounded-full p-1.5 w-8 h-8 flex items-center justify-center ${
-                inWatchlist ? 'bg-neutral-800' : 'bg-neutral-800 hover:bg-violet-600'
+                inWatchlist ? 'bg-violet-600' : 'bg-neutral-800 hover:bg-neutral-800'
               }`}
             >
               <FaStar className={`text-base ${inWatchlist ? 'text-yellow-400' : 'text-white'} hover:text-yellow-400`} />

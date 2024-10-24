@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { User } from "lucide-react";
 import React, { useState } from "react";
@@ -6,6 +8,7 @@ import ReactMarkdown from "react-markdown";
 import { type Message as TMessage } from "ai/react";
 import { ActorInfo } from "./ui/actor";
 import MovieCardMd from "../component/MovieCardMd";
+import { LoadingState } from "./ui/stateLoading";
 
 
 const TMDBIMAGEURL = process.env.NEXT_PUBLIC_TMDB_IMAGE_URL!;
@@ -28,10 +31,6 @@ export const Message = ({ content, message, logging, isLoading }: MessageProps) 
 
   return (
     <div
-      // className={cn({
-      //   "bg-neutral-900": isUserMessage,
-      //   "bg-neutral-900": isAssistantMessage,
-      // })}
       className={`bg-neutral-900`}
     >
       <div className="p-6">
@@ -41,13 +40,14 @@ export const Message = ({ content, message, logging, isLoading }: MessageProps) 
               "size-6 shrink-0 aspect-square rounded-full border border-orange-700 bg-orange-900 flex justify-center items-center",
               {
                 "bg-violet-950 border-violet-500 text-zinc-200": isUserMessage,
+                "bg-transparent border-transparent": isAssistantMessage && message.content === ''
               }
             )}
           >
             {isUserMessage && (
               <User className="size-3" />
             )}
-            {isAssistantMessage && (
+            {isAssistantMessage && message.content !== '' && (
               <FaHatWizard className="size-3 text-white" />
             )}
           </div>
@@ -59,46 +59,42 @@ export const Message = ({ content, message, logging, isLoading }: MessageProps) 
             </div>
 
             <div className="max-w-none">
-              {
-              message.toolInvocations ? (
-                message.toolInvocations.map((toolInvocation) => {
-                  const { toolName, toolCallId, state } = toolInvocation;
-                  
+              <ReactMarkdown className="font-light font-sm whitespace-pre-line">{message.content}</ReactMarkdown>
+              {message.toolInvocations && message.toolInvocations.map((toolInvocation) => {
+                const { toolName, toolCallId, state } = toolInvocation;
 
-                  if (state === 'result') {
-                    if (toolName === 'getActorInfo') {
-                      const { result } = toolInvocation;
-                      return (
-                        <div key={toolCallId}>
-                          <ActorInfo actor={result.tmdb} imageUrl={result.imageUrl} movies={result.movies} data={result.data} />
-                        </div>
-                      );
-                    } else if (toolName === 'searchMovies' || toolName === 'describeMovie') {
-                      const { result } = toolInvocation;
-                      return (
-                        <div key={toolCallId}>
-                          {}
-                          <MovieCardMd movies={result} />
-                        </div>
-                      );
-                    } else if (toolName === 'getMovieReview') {
-                      const { result } = toolInvocation;
-                      return (
-                        <div key={toolCallId}>
-                          <ReactMarkdown className="font-light font-sm whitespace-pre-line">{result.content}</ReactMarkdown>
-                        </div>
-                      );
-                    }
-                  } else {
-                    return (
+                if (state === 'result') {
+                  if (toolName === 'getActorInfo') {
+                    const { result } = toolInvocation;
+                    return result && result.tmdb && result.tmdb.name ? (
                       <div key={toolCallId}>
-                        <p className="text-sm text-zinc-500">{logging}</p>
+                        <ActorInfo actor={result.tmdb} imageUrl={result.imageUrl} movies={result.movies} data={result.data} />
                       </div>
-                    );
+                    ) : null;
+                  } else if (toolName === 'searchMovies' || toolName === 'describeMovie') {
+                    const { result } = toolInvocation;
+                    return result ? (
+                      <div key={toolCallId}>
+                        <MovieCardMd movies={result} />
+                      </div>
+                    ) : null;
+                  } else if (toolName === 'getMovieReview') {
+                    const { result } = toolInvocation;
+                    return result ? (
+                      <div key={toolCallId}>
+                        <ReactMarkdown className="font-light font-sm whitespace-pre-line">{message.content}</ReactMarkdown>
+                      </div>
+                    ) : null;
                   }
-                  return null;
-                })
-              ) : <ReactMarkdown className="font-light font-sm whitespace-pre-line">{message.content}</ReactMarkdown>}
+                } else {
+                  return (
+                    <div style={{ transform: 'translate(0px, -45px)' }}>
+                      <LoadingState key={toolCallId} logging={logging}/>
+                    </div>
+                  );
+                }
+                return null;
+              })}
             </div>
           </div>
         </div>

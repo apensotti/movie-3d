@@ -74,9 +74,11 @@ export function AccountAvatar({imageLink}: AccountAvatarProps) {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className='gap-2 hover:bg-transparent focus:bg-transparent'>
-                <Button className="rounded-full bg-violet-900 p-2 w-10 h-10 flex items-center justify-center hover:bg-orange-500">
-                  <FaStar className='text-lg text-white'/>
+                <Link href={'/'} className='rounded-full'>
+                  <Button className="rounded-full bg-violet-900 p-2 w-10 h-10 flex items-center justify-center hover:bg-orange-500">
+                    <FaStar className='text-lg text-white'/>
                 </Button>
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuGroup className='flex flex-row gap-3 p-2 justify-center'>
@@ -88,9 +90,11 @@ export function AccountAvatar({imageLink}: AccountAvatarProps) {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className='gap-2 hover:bg-transparent focus:bg-transparent'>
-                <Button className="rounded-full bg-violet-900 p-2 w-10 h-10 flex items-center justify-center hover:bg-orange-500">
-                  <MdReviews className='text-lg text-white'/>
+                <Link href={"/chat"} className='hover:bg-transparent rounded-full'>
+                  <Button className="rounded-full bg-violet-900 p-2 w-10 h-10 flex items-center justify-center hover:bg-orange-500">
+                    <MdReviews className='text-lg text-white'/>
                 </Button>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className='gap-2 hover:bg-transparent focus:bg-transparent'>
                 <Button className="rounded-full bg-violet-900 p-2 w-10 h-10 flex items-center justify-center hover:bg-orange-500">

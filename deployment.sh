@@ -11,4 +11,4 @@ docker network rm movie-3d_app-network || true
 export APP_ENV=prod
 
 # Build and start the containers
-docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build 
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d

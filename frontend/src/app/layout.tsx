@@ -7,6 +7,9 @@ import { useSession } from 'next-auth/react';
 import { AI } from '@/components/ai/ai';
 import { auth } from '@/lib/auth/authConfig';
 
+export const maxDuration = 30;
+export const dynamic = 'force-dynamic'
+
 const inter = Inter({ subsets: ['latin'] });
 
 
