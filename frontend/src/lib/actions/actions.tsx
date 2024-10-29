@@ -32,7 +32,6 @@ const getMovieData = async (ids: string[]) => {
     return response.json();
   });
   const movieData = await Promise.all(moviePromises);
-  console.log(movieData);
   return movieData;
 };
 
@@ -98,8 +97,6 @@ export async function continueConversation(input: string): Promise<ClientMessage
         generate: async ({ query }) => {
           const ids = await searchVDB(query);
           const movies = await getMovieData(ids);
-
-          console.log(movies);
 
           history.done((messages: ServerMessage[]) => [
             ...messages,

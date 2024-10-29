@@ -5,7 +5,9 @@ import { ChatInterface } from "@/components/ai/ChatInterface2";
 import LibraryWatchlist from "../../components/component/LibraryWatchlist";
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { BsChatDots, BsSearch } from 'react-icons/bs';
-import "../globals.css"
+import '../globals.css'
+import { useSession } from 'next-auth/react';
+import { generateId } from 'ai';
 
 export default function Page() {
     const [isChatOpen, setIsChatOpen] = useState(false);
@@ -14,6 +16,8 @@ export default function Page() {
     const toggleInterface = () => {
         setActiveInterface(prev => prev === 'chat' ? 'search' : 'chat');
     };
+
+    const session_id = generateId();
 
     return (
         <>
@@ -40,7 +44,7 @@ export default function Page() {
                         )}
                         <div className="flex-grow overflow-hidden">
                             {activeInterface === 'chat' ? (
-                                <ChatInterface className="h-full rounded-xl bg-neutral-800" inputScale={125}/>
+                                <ChatInterface className="h-full rounded-xl bg-neutral-800" initialMessages={[]} inputScale={125} session_id={session_id} />
                             ) : (
                                 <div className="h-full rounded-xl bg-neutral-800 flex items-center justify-center text-white text-2xl">
                                     SearchBar Placeholder

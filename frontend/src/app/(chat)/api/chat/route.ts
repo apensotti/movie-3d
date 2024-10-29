@@ -13,6 +13,8 @@ import MovieCardSm from '@/components/component/MovieCardSm';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { tools } from '@/components/ai/tools';
 import { unstable_noStore as noStore } from 'next/cache';
+import { createSession, getMessages, updateSession } from '@/app/(chat)/actions';  
+import { auth } from '@/lib/auth/authConfig';
 
 const MWAPI = process.env.NEXT_PUBLIC_MWAPI!;
 const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI_URL!;
@@ -39,7 +41,10 @@ export interface ClientMessage {
 
 export async function POST(request: Request) {
   noStore();
-  const { messages } = await request.json();
+
+  const session = await auth();
+
+  const { messages, session_id } = await request.json();
 
   const systemPrompt = `
     You are a movie assistant that can use tools to find movies based on descriptions and answer questions about those movies.
@@ -52,20 +57,45 @@ export async function POST(request: Request) {
     getActorInfo: If the user inputs just a single actors name use this tool.
     getMovieReview: If the user asks about movie reviews use this tool. Generate a summary of the reviews in a few paragraphs, quote sentiment and opinions.
 
-    use a combination of tools when needed.
-    `;
+    If the question is not answered with the one tool, try another tool.
 
+    `;
+    
   const result = await streamText({
     model: openai('gpt-4o-mini'),
     system: systemPrompt,
     messages: convertToCoreMessages(messages),
     tools,
-    temperature: 0.9,
-    maxSteps: 2,
+    temperature: 0.1,
+    maxSteps: 3,
+    async onFinish({ responseMessages }) {
+      if (session && session.user && session.user.email) {
+        const sessionData = {
+          messages: messages,
+          email: session.user.email,
+          session_id: session_id
+        };
+        
+        const messages_response = [...messages, ...responseMessages];
+
+        try {
+          if (messages.length > 1) {
+            await updateSession(session_id, session.user.email, messages_response);
+          } else if (messages.length === 1) {
+            await createSession(session_id, session.user.email, messages_response);
+          } else {
+            console.log("no messages");
+          }
+        } catch (error) {
+          console.error('Error creating session:', error);
+        }
+      }
+    },
     experimental_telemetry: {
       isEnabled: true,
-      functionId: "stream-text",
+      functionId: 'stream-text',
     },
+    experimental_toolCallStreaming: true
   });
 
   return result.toDataStreamResponse({});

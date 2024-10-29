@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { User } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaHatWizard } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import { type Message as TMessage } from "ai/react";
@@ -28,6 +28,22 @@ const preprocessMarkdown = (content: string) => {
 export const Message = ({ content, message, logging, isLoading }: MessageProps) => {
   const isUserMessage = message.role === 'user';
   const isAssistantMessage = message.role === 'assistant';
+
+  const [streamedContent, setStreamedContent] = useState<string>('');
+
+  // useEffect(() => {
+  //   let currentContent = '';
+  //   const interval = setInterval(() => {
+  //     if (currentContent.length < message.content.length) {
+  //       currentContent += message.content[currentContent.length];
+  //       setStreamedContent(currentContent);
+  //     } else {
+  //       clearInterval(interval);
+  //     }
+  //   }, 10); // Adjust the interval time as needed for streaming effect
+
+  //   return () => clearInterval(interval);
+  // }, [message.content]);
 
   return (
     <div

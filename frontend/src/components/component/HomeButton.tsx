@@ -12,19 +12,21 @@ const HomeButton = () => {
     setIsMenuVisible(!isMenuVisible);
   };
 
+  const h = 16
+
   return (
     <>
-    <div className="relative w-14 h-14">
+    <div className={`relative w-${h} h-${h}`}>
       <Link href={'/'}>
         <img
           src="/wizardlogo2xwhite.png"
           alt="logo"
-          className="absolute top-0 left-0 w-14 h-14 z-10 cursor-pointer fade-on-hover duration-200 ease-in-out"
+          className={`absolute w-${h} h-${h} z-10 cursor-pointer fade-on-hover duration-200 ease-in-out`}
         />
         <img
           src="/wizardlogo2x.png"
           alt="logo"
-          className="absolute top-0 left-0 w-14 h-14"
+          className={`absolute w-${h} h-${h}`}
         />
       </Link>
     </div>

@@ -2,11 +2,7 @@
 
 import { omdb } from '../../data/types';
 import React, { RefAttributes, useState } from 'react';
-import { SiRottentomatoes } from "react-icons/si";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi"; // Arrow icons for toggling
-import Link from 'next/link';
-import {Messages} from '../ai/ChatMessages';
-import Chat from '../ai/Chat';
 
 interface ContentPopupProps {
   movies?: omdb[]; 

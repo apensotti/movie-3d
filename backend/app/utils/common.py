@@ -89,6 +89,7 @@ def search_movies_in_mysql(title='', keywords=[], cast=[], crew=[], date_range=[
 
     if conditions:
         sql2 += ' WHERE ' + ' AND '.join(conditions)
+        sql2 += 'LIMIT 100'
     
     cursor.execute(sql2)
     results = cursor.fetchall()

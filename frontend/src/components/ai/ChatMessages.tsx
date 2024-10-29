@@ -1,8 +1,7 @@
+import React, { useEffect, useRef } from "react";
 import { Message } from "./ChatMessage";
 import { MessageSquare } from "lucide-react";
 import { type Message as TMessage } from "ai/react";
-import { ClientMessage } from "@/lib/actions/actions";
-import { ActorInfo } from "./ui/actor";
 
 interface MessagesProps {
   messages?: TMessage[];
@@ -11,25 +10,33 @@ interface MessagesProps {
 }
 
 export const Messages = ({ messages, logging, isLoading }: MessagesProps) => {
-  console
-  return (
-    <div className="flex max-h-[calc(100vh-3.5rem-7rem)] flex-1 flex-col overflow-y no-scrollbar">
-      {messages && messages.length ? (
-        messages.map((message, i) => {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-          return (
-            <>
-              <Message
-                key={i}
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+  
+  console.log("CHAT MESSAGES", messages);
+
+  return (
+    <div className="flex flex-col overflow-y-auto h-[calc(100vh-4rem)] no-scrollbar">
+      {messages && messages.length ? (
+        <>
+          {messages.map((message, i) => (
+            <Message
+              key={i}
               content={message.content}
               message={message}
               logging={logging}
               isLoading={isLoading}
             />
-            
-            </>
-          );
-        })
+          ))}
+          <div ref={messagesEndRef} />
+        </>
       ) : (
         <div className="flex-1 flex flex-col items-center justify-center gap-2 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full">
           <MessageSquare className="size-8 text-orange-500" />

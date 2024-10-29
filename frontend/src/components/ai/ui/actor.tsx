@@ -17,10 +17,10 @@ interface ActorInfoProps {
   imageUrl: string | null;
   movies: any[];
   data: {
-    birthday: string;
-    height: number;
-    net_worth: number;
-    nationality: string;
+    birthday?: string;
+    height?: number;
+    net_worth?: number;
+    nationality?: string;
   }[];
 }
 
@@ -32,9 +32,9 @@ export const ActorInfo: React.FC<ActorInfoProps> = ({ actor, imageUrl, movies, d
         <div className="flex flex-col gap-6">
           <h1 className="text-3xl font-bold mt-4">{actor.name}</h1>
           <ul className="space-y-2">
-            <li><span className="font-semibold">Age:</span> {calculateAge(new Date(data[0].birthday))}</li>
-            <li><span className="font-semibold">Height:</span> {convertMetersToFeetAndInches(data[0].height)}</li>
-            <li><span className="font-semibold">Net Worth:</span> {formatCurrency(data[0].net_worth)}</li>
+            {data[0].birthday && <li><span className="font-semibold">Age:</span> {calculateAge(new Date(data[0].birthday))}</li>}
+            {data[0].height && <li><span className="font-semibold">Height:</span> {convertMetersToFeetAndInches(data[0].height)}</li>}
+            {data[0].net_worth && <li><span className="font-semibold">Net Worth:</span> {formatCurrency(data[0].net_worth)}</li>}
             <li><span className="font-semibold">Popularity:</span> {actor.popularity}</li>
             <li><span className="font-semibold">Notable works:</span> {actor.known_for.map((work) => work.title || work.name).join(', ')}</li>
           </ul>

@@ -48,7 +48,7 @@ export function AccountAvatar({imageLink}: AccountAvatarProps) {
             <Button className="menu-button rounded-full w-7 h-7 bg-violet-900 p-0">
                 <Avatar>
                   {imageLink ? (
-                    <AvatarImage src={imageLink} />
+                    <AvatarImage src={imageLink} referrerPolicy="no-referrer" />
                   ) : (
                     <AvatarImage src="/defaultprofile2.png" />
                   )}

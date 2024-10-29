@@ -38,7 +38,6 @@ const searchVDB = async (query: string) => {
     });
     const data = await response.json();
     const celebrityData = await celebrityResponse.json();
-    console.log(celebrityData);
     return {tmdb: data.results[0], data: celebrityData}; // Assuming we want the first result
   };
   
@@ -100,7 +99,7 @@ export const tools = {
   }),
 
   getActorInfo: createTool({
-    description: ' Based on an actor name, find the actor and their movies.',
+    description: ' Based on an actor name, find the actor and their movies. If the user says something like "what movies is this actor in" or "what movies has this actor been in" use this tool. If the users asks about a character and who played that character, use this tool.',
     parameters: z.object({
       name: z.string().describe('The name of the actor to search for.'),
     }),
@@ -112,7 +111,9 @@ export const tools = {
 
         const actorMovies = await response.json();
         const movies = await getMovieData(actorMovies);
-        return {movies, imageUrl, tmdb, data};
+        const returnObject = {movies, imageUrl, tmdb, data};
+
+        return returnObject;
       } catch (error) {
         console.error('Error in getActorInfo:', error);
         return { error: 'Unable to fetch actor information' };

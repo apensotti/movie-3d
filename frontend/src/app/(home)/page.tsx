@@ -37,8 +37,6 @@ export default function AIPage() {
   const [conversation, setConversation] = useUIState();
   const { continueConversation } = useActions();
 
-  console.log(setMovies)
-
   useEffect(() => {
     if (!session) {
       router.refresh();
