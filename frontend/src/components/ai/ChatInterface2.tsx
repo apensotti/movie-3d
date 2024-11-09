@@ -21,11 +21,14 @@ interface ChatInterfaceProps {
   session_id: string;
   session?: Session | null;
   initialMessages?: CoreMessage[];
+  chatBg?: number;
+  inputBg?: number;
+  messageBg?: number;
 }
 
 const MWAPI = process.env.NEXT_PUBLIC_MWAPI;
 
-export function ChatInterface({session_id, session, initialMessages, className = '', inputScale = 110 }: ChatInterfaceProps) {
+export function ChatInterface({session_id, session, initialMessages, inputScale = 110, chatBg = 500, inputBg = 500, messageBg = 500}: ChatInterfaceProps) {
   noStore();
   const [logging, setLogging] = useState('thinking...');
   const [toolLogging, setToolLogging] = useState(false);
@@ -33,6 +36,7 @@ export function ChatInterface({session_id, session, initialMessages, className =
   
   const { messages, input, handleInputChange, handleSubmit, error, isLoading, reload, stop } = useChat({
     api: '/api/chat',
+    headers: {'Content-Type':'text/event-stream'},
     body: {
       session_id: session_id,
     },
@@ -63,7 +67,6 @@ export function ChatInterface({session_id, session, initialMessages, className =
     },
     async onFinish() {
       window.history.replaceState({}, '', `/chat/${session_id}`);
-      console.log("FINISHED", messages);
     },
   });
 
@@ -72,7 +75,7 @@ export function ChatInterface({session_id, session, initialMessages, className =
   }, [logging]);
 
   return (
-    <div className={`flex flex-col h-full ${className}`}>
+    <div className={`flex flex-col h-full`}>
       {/* Messages container */}
       <div className="flex-grow overflow-y-auto mb-4 no-scrollbar rounded-lg">
         <Messages messages={messages} logging={logging} isLoading={isLoading} />
@@ -80,7 +83,7 @@ export function ChatInterface({session_id, session, initialMessages, className =
 
       {/* Input container */}
       <div className={`w-full flex justify-center pb-4 scale-${inputScale}`}>
-        <div className={`w-1/3 relative`}>
+        <div className={`w-1/3`}>
           <Input
             type="text"
             className={`w-full rounded-full pr-10`}

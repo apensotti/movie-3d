@@ -17,8 +17,8 @@ import { createSession, getMessages, updateSession } from '@/app/(chat)/actions'
 import { auth } from '@/lib/auth/authConfig';
 
 const MWAPI = process.env.NEXT_PUBLIC_MWAPI!;
-const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI_URL!;
-const OMBDKEY = process.env.NEXT_PUBLIC_OMBDAPI_KEY!;
+const OMBDAPI = process.env.NEXT_PUBLIC_OMDBAPI_URL!;
+const OMBDKEY = process.env.NEXT_PUBLIC_OMDBAPI_KEY!;
 const TMDB = process.env.NEXT_PUBLIC_TMDB!;
 const TMDBKEY = process.env.NEXT_PUBLIC_TMDB_KEY!;
 const TMDBIMAGEURL = process.env.NEXT_PUBLIC_TMDB_IMAGE_URL!;
@@ -66,8 +66,9 @@ export async function POST(request: Request) {
     system: systemPrompt,
     messages: convertToCoreMessages(messages),
     tools,
-    temperature: 0.1,
+    temperature: 0.8,
     maxSteps: 3,
+    experimental_continueSteps: true,
     async onFinish({ responseMessages }) {
       if (session && session.user && session.user.email) {
         const sessionData = {

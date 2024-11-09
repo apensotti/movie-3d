@@ -4,7 +4,7 @@ import LoginSignupAvatar from '@/components/auth/LoginSignupAvatar';
 import { AI } from '@/components/ai/ai';
 import { auth } from '@/lib/auth/authConfig';
 import { SidebarProvider, SidebarTrigger  } from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/app-sidebar';
+import { AppSidebar } from '@/components/component/ChatSidebar/app-sidebar';
 import '../../globals.css'
 import { ThemeProvider } from 'next-themes';
 import { getMessages, getUserSessions } from '@/app/(chat)/actions';
@@ -29,17 +29,13 @@ export default async function RootLayout({
         <body className={`${inter.className} h-screen flex flex-col`} >
           <ThemeProvider attribute="class" defaultTheme="dark">
             <AuthProvider session={session}>
-              <AI>
-                <SidebarProvider defaultOpen={false}>
-                <div className="flex flex-grow overflow-hidden">
-                  
-                  <AppSidebar sessions={sessions || []}/>
+              <AI>                
+                <div className="flex flex-grow overflow-hidden">                  
+                  <AppSidebar sessions={sessions || []} user_session={session || undefined}/>
                   <div className="flex-grow flex flex-col overflow-hidden" >
-                    <LoginSignupAvatar session={session}/>
                     {children}
                   </div>
                 </div>
-                </SidebarProvider>
               </AI>
             </AuthProvider>
           </ThemeProvider>

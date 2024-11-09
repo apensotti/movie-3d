@@ -19,8 +19,6 @@ export const Messages = ({ messages, logging, isLoading }: MessagesProps) => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-  
-  console.log("CHAT MESSAGES", messages);
 
   return (
     <div className="flex flex-col overflow-y-auto h-[calc(100vh-4rem)] no-scrollbar">
@@ -38,7 +36,7 @@ export const Messages = ({ messages, logging, isLoading }: MessagesProps) => {
           <div ref={messagesEndRef} />
         </>
       ) : (
-        <div className="flex-1 flex flex-col items-center justify-center gap-2 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full">
+        <div className="flex-1 flex flex-col items-center justify-center gap-2 m-auto w-full">
           <MessageSquare className="size-8 text-orange-500" />
           <h3 className="font-semibold text-xl text-white">You're all set!</h3>
           <p className="text-zinc-500 text-sm">Ask your first question to get started.</p>

@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
-const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI_URL;
-const OMDB_API_KEY = process.env.NEXT_PUBLIC_OMBDAPI_KEY;
+const OMBDAPI = process.env.NEXT_PUBLIC_OMDBAPI_URL;
+const OMDB_API_KEY = process.env.NEXT_PUBLIC_OMDBAPI_KEY;
 
 export default function PickOnePage() {
   const [movies, setMovies] = useState<{ imdbID: string; Poster: string }[]>([]);

@@ -6,8 +6,8 @@ import { generateText } from 'ai';
 // Import necessary functions and constants
 
 const MWAPI = process.env.NEXT_PUBLIC_MWAPI!;
-const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI_URL!;
-const OMBDKEY = process.env.NEXT_PUBLIC_OMBDAPI_KEY!;
+const OMBDAPI = process.env.NEXT_PUBLIC_OMDBAPI_URL!;
+const OMBDKEY = process.env.NEXT_PUBLIC_OMDBAPI_KEY!;
 const TMDB = process.env.NEXT_PUBLIC_TMDB!;
 const TMDBKEY = process.env.NEXT_PUBLIC_TMDB_KEY!;
 const TMDBIMAGEURL = process.env.NEXT_PUBLIC_TMDB_IMAGE_URL!;
@@ -31,14 +31,14 @@ const searchVDB = async (query: string) => {
   
   const searchActor = async (name: string) => {
     const response = await fetch(`${TMDB}/search/person?query=${encodeURIComponent(name)}&api_key=${TMDBKEY}`);
-    const celebrityResponse = await fetch(`${CELEBRITY_API}/celebrity?name=${encodeURIComponent(name)}`, {
+    const celebrityResponse = await fetch(`${CELEBRITY_API}?name=${encodeURIComponent(name)}`, {
       headers: {
         'X-Api-Key': CELEBRITY_API_KEY
       }
     });
     const data = await response.json();
     const celebrityData = await celebrityResponse.json();
-    return {tmdb: data.results[0], data: celebrityData}; // Assuming we want the first result
+    return {tmdb: data.results[0], data: celebrityData};
   };
   
   const getActorImage = async (poster_path: string) => {

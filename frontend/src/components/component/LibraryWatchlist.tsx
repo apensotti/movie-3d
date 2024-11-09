@@ -8,8 +8,8 @@ import { IoLibrary } from "react-icons/io5";
 import { FaStar } from "react-icons/fa";
 
 const MWAPI = process.env.NEXT_PUBLIC_MWAPI!;
-const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI_URL;
-const OMDB_API_KEY = process.env.NEXT_PUBLIC_OMBDAPI_KEY;
+const OMBDAPI = process.env.NEXT_PUBLIC_OMDBAPI_URL;
+const OMDB_API_KEY = process.env.NEXT_PUBLIC_OMDBAPI_KEY;
 
 export default function LibraryWatchlist() {
     const [activeTab, setActiveTab] = useState('library');
@@ -106,8 +106,8 @@ export default function LibraryWatchlist() {
     };
 
     return (
-        <div className="h-full flex flex-col">
-            <div className="flex relative">
+        <div className="h-full flex flex-col p-4">
+            <div className="flex relative flex-shrink-0">
                 <button
                     className={`flex-1 py-2 px-4 text-center rounded-t-xl flex items-center justify-center ${activeTab === 'library' ? 'bg-violet-800 text-white z-10' : 'bg-neutral-850'} shadow-lg relative`}
                     onClick={() => setActiveTab('library')}
@@ -131,19 +131,21 @@ export default function LibraryWatchlist() {
                     Watchlist
                 </button>
             </div>
-            <div className='bg-neutral-850 p-4 rounded-b-xl shadow-lg flex-grow overflow-hidden'>
+            <div className='bg-neutral-850 flex-1 p-4 rounded-b-xl shadow-lg overflow-hidden'>
                 {isLoading ? (
                     <div className="flex justify-center items-center h-full">
                         <Loader2 className="h-8 w-8 animate-spin text-violet-600" />
                     </div>
                 ) : (
-                    <div className="overflow-y-auto h-full no-scrollbar">
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4 pb-4 px-4">
+                    <div className="h-full overflow-y-auto no-scrollbar">
+                        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 2xl:grid-cols-16">
                             {(activeTab === 'library' ? libraryMovies : watchlistMovies).map(imdbID => (
-                                <div key={imdbID} className="w-full pb-[150%] relative">
+                                <div key={imdbID} className="w-full pb-[130%] relative">
                                     {moviePosters[imdbID] && (
-                                        <div className="absolute inset-0 shadow-md">
+                                        <div className="absolute">
                                             <PosterButtons
+                                                width={"80%"}
+                                                height={"80%"}
                                                 posterLink={moviePosters[imdbID]}
                                                 onLibraryClick={() => handleLibraryClick(imdbID)}
                                                 onWatchlistClick={() => handleWatchlistClick(imdbID)}

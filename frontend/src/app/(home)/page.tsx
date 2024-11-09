@@ -25,8 +25,8 @@ export default function AIPage() {
   const { data: sessionData } = useSession();
   const session = sessionData;
   const MWAPI = process.env.NEXT_PUBLIC_MWAPI!;
-  const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI_URL!;
-  const OMBDKEY = process.env.NEXT_PUBLIC_OMBDAPI_KEY!;
+  const OMBDAPI = process.env.NEXT_PUBLIC_OMDBAPI_URL!;
+  const OMBDKEY = process.env.NEXT_PUBLIC_OMDBAPI_KEY!;
 
   const [query, setQuery] = useState<string>("");
   const [ids, setIds] = useState<string[]>(top200);

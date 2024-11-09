@@ -9,10 +9,14 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_community.vectorstores import FAISS
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from fastapi.responses import StreamingResponse
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 llm = ChatOpenAI(model="gpt-4o", streaming=True)
 llm_embeddings = OpenAIEmbeddings(model='text-embedding-3-small')
-vdb = FAISS.load_local('data/faissvdb/', llm_embeddings, allow_dangerous_deserialization=True)
+vdb = FAISS.load_local('data/description/', llm_embeddings, allow_dangerous_deserialization=True)
 
 #NLP
 def split_into_sentences(paragraph):

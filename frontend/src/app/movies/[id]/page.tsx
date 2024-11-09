@@ -4,15 +4,14 @@ import PageNav from "../../../components/movie/PageNav";
 import { Video } from "../../../components/movie/MovieVideos";
 import { auth } from "@/lib/auth/authConfig";
 
-const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI_URL;
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const OMBDAPI = process.env.NEXT_PUBLIC_OMDBAPI_URL;
 const MWAPI = process.env.NEXT_PUBLIC_MWAPI!;
 
 export default async function Page({ params }: { params: { id: string } }) {
   const session = await auth()
   const userEmail = session?.user?.email;
 
-  const response1 = await fetch(`${OMBDAPI}?i=${params.id}&plot=full&apikey=${process.env.NEXT_PUBLIC_OMBDAPI_KEY}`);
+  const response1 = await fetch(`${OMBDAPI}?i=${params.id}&plot=full&apikey=${process.env.NEXT_PUBLIC_OMDBAPI_KEY}`);
   const ombd_data: omdb = await response1.json();
 
   const options = {

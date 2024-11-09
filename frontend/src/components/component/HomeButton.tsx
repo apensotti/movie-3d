@@ -5,14 +5,12 @@ import Link from 'next/link';
 import { BsStars } from "react-icons/bs";
 import { useState } from 'react';
 
-const HomeButton = () => {
+const HomeButton = ({h}: {h: number}) => {
   const [isMenuVisible, setIsMenuVisible] = useState(true);
 
   const toggleMenu = () => {
     setIsMenuVisible(!isMenuVisible);
   };
-
-  const h = 16
 
   return (
     <>

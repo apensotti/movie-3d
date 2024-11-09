@@ -16,7 +16,7 @@ async function layout({children}: Readonly<{children: React.ReactNode;}>) {
       <body className={`${inter.className} h-screen flex flex-col`}>
       <ThemeProvider attribute="class" defaultTheme="dark">
         <div className="absolute -top-0 left-4 z-50 flex flex-row items-center w-96 h-24 space-x-3">
-          <HomeButton />
+          <HomeButton h={10} />
         </div>
         <AuthProvider session={session}>
             {children}

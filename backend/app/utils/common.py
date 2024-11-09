@@ -17,41 +17,44 @@ def get_movie(imdb_id: str):
 ## 3D Graph Data
 
 def get_selected_movies(ids):
-    data = [movie for movie in movies if movie['imdb_id'] in ids]
+    data = [movie for movie in movies if str(movie['imdb_id']) in ids and 'genres' in movie and movie['genres']]
     return data
 
 def get_genres(ids):
     genres = []
-    data = [d for d in movies if d['imdb_id'] in ids]
+    data = [d for d in movies if str(d['imdb_id']) in ids and 'genres' in d and d['genres']]
     for row in data:
-        genres.extend(literal_eval(row['genres']))
+        genres.extend(row['genres'])
     return list(set(genres))
 
-def generate_graph_data(ids=None):
-    ids = literal_eval(ids)
+def generate_graph_data(ids: list[str]):
+    imdb_ids = ids
 
     nodes = []
     links = []
 
-    genres = get_genres(ids)
-    movies = get_selected_movies(ids)
+    genres = get_genres(imdb_ids)
+    movies = get_selected_movies(imdb_ids)
+    genre_to_movies = {genre: [] for genre in genres}
 
-    for genre in set(genres):
+    for genre in genres:
         node = {"id": genre, "title": genre, "size": 1}
         nodes.append(node)
 
-    for i,row in enumerate(movies):
-        try:
-            prev_row = movies.iloc[i-1]
-            links.append({"source": prev_row['imdb_id'], "target": row['imdb_id']})
-        except:
-            pass
-        for genre in literal_eval((row['genres'])):
-            links.append({"source": genre, "target": row['imdb_id']})
+    for movie in movies:
+        if 'genres' in movie and movie['genres']:
+            nodes.append({"id": str(movie['imdb_id']), "title": movie['title'], "size": movie['popularity']})
+            for genre in movie['genres']:
+                links.append({"source": genre, "target": str(movie['imdb_id'])})
+                genre_to_movies[genre].append(str(movie['imdb_id']))
 
-        nodes.append({"id": row['imdb_id'], "title": row['title'], "size": row['popularity']})
+    for genre, ids in genre_to_movies.items():
+        for i in range(len(ids)):
+            for j in range(i + 1, len(ids)):
+                links.append({"source": ids[i], "target": ids[j]})
 
     return {"nodes": nodes, "links": links}
+
 
 def search_movies_in_mysql(title='', keywords=[], cast=[], crew=[], date_range=[]):
     # Establish a connection to the MySQL database

@@ -14,8 +14,8 @@ import MovieCardSm from '@/components/component/MovieCardSm';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const MWAPI = process.env.NEXT_PUBLIC_MWAPI!;
-const OMBDAPI = process.env.NEXT_PUBLIC_OMBDAPI_URL!;
-const OMBDKEY = process.env.NEXT_PUBLIC_OMBDAPI_KEY!;
+const OMBDAPI = process.env.NEXT_PUBLIC_OMDBAPI_URL!;
+const OMBDKEY = process.env.NEXT_PUBLIC_OMDBAPI_KEY!;
 const TMDB = process.env.NEXT_PUBLIC_TMDB!;
 const TMDBKEY = process.env.NEXT_PUBLIC_TMDB_KEY!;
 const TMDBIMAGEURL = process.env.NEXT_PUBLIC_TMDB_IMAGE_URL!;
