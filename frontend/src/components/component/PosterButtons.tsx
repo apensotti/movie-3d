@@ -25,7 +25,7 @@ const PosterButtons: React.FC<PosterButtonsProps> = ({
 
   return (
     <div 
-      className="relative"
+      className="flex-shrink-0 relative"
       style={{ width, height }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

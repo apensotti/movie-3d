@@ -16,6 +16,7 @@ const LibraryWatchlistAddButtons: React.FC<LibraryWatchlistAddButtonsProps> = ({
   onWatchlistClick, 
   inLibrary, 
   inWatchlist 
+  
 }) => {
   return (
     <div className="flex space-x-2">

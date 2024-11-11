@@ -84,3 +84,14 @@ async def get_session(session_id):
 async def get_messages(session_id):
     session = await get_session(session_id)
     return session['messages'] if session else None
+
+
+async def get_library(email: str):
+    db = get_db()
+    library = await db.users.find_one({"email": email})
+    return library['library'] if library else None
+
+async def get_watchlist(email: str):
+    db = get_db()
+    watchlist = await db.users.find_one({"email": email})
+    return watchlist['watchlist'] if watchlist else None
