@@ -19,13 +19,14 @@ interface MessageProps {
   logging?: string;
   isLoading?: boolean;
   toolLogging?: boolean;
+  bg?: string;
 }
 
 const preprocessMarkdown = (content: string) => {
   return content.replace(/\n/g, '  \n')
 }
 
-export const Message = ({ content, message, logging, isLoading }: MessageProps) => {
+export const Message = ({ content, message, logging, isLoading, bg }: MessageProps) => {
   const isUserMessage = message.role === 'user';
   const isAssistantMessage = message.role === 'assistant';
 
@@ -46,10 +47,8 @@ export const Message = ({ content, message, logging, isLoading }: MessageProps) 
   // }, [message.content]);
 
   return (
-    <div
-      className={`bg-neutral-900`}
-    >
-      <div className="p-6">
+    <div className={`bg-neutral-${bg}`}>
+      <div className={`p-6`}>
         <div className="max-w-3xl mx-auto flex items-start gap-2.5">
           <div
             className={cn(

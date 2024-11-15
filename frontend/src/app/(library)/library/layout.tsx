@@ -1,5 +1,5 @@
 import { Inter } from 'next/font/google';
-import '../globals.css';
+import '../../globals.css';
 import HomeButton from '@/components/component/HomeButton';
 import AuthProvider from '@/components/auth/AuthProvider';
 import LoginSignupAvatar from '@/components/auth/LoginSignupAvatar';

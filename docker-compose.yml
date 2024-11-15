@@ -60,7 +60,8 @@ services:
       MYSQL_DATABASE: movies
     volumes:
       - mysqldata:/var/lib/mysql
-      - ./mysql/movies.csv:/var/lib/mysql-files/movies.csv  # Mount CSV to secure_file_priv directory
+      - ./mysql/movies.csv:/var/lib/mysql-files/movies.csv
+      - ./mysql/my.cnf:/etc/my.cnf
     ports:
       - "3307:3306"
     networks:

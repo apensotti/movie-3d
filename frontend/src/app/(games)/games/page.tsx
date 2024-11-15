@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
-import "../globals.css"
+import "../../globals.css"
 import { useRouter } from 'next/navigation'
 
 interface GameCardProps {

@@ -79,7 +79,7 @@ def search_movies_in_mysql(title='', keywords=[], cast=[], crew=[], date_range=[
     conditions = []
 
     if title:
-        conditions.append(f"(LOWER(title) LIKE '%{processed_title}%' OR LOWER(original_title) LIKE '%{processed_title}%')")
+        conditions.append(f"(LOWER(title) LIKE '%{title}%' OR LOWER(original_title) LIKE '%{title}%' OR processed_title LIKE '%{title}%')")
     if keywords:
         conditions.append(f"({keyword_filter})")
     if cast:

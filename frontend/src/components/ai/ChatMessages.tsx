@@ -7,9 +7,10 @@ interface MessagesProps {
   messages?: TMessage[];
   logging?: string;
   isLoading?: boolean;
+  bg?: string;
 }
 
-export const Messages = ({ messages, logging, isLoading }: MessagesProps) => {
+export const Messages = ({ messages, logging, isLoading, bg}: MessagesProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -31,6 +32,7 @@ export const Messages = ({ messages, logging, isLoading }: MessagesProps) => {
               message={message}
               logging={logging}
               isLoading={isLoading}
+              bg={bg}
             />
           ))}
           <div ref={messagesEndRef} />

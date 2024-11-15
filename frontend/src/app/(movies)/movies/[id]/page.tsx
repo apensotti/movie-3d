@@ -1,7 +1,7 @@
-import { omdb } from "../../../data/types";
-import MovieVideos, { MovieVideosProps } from "../../../components/movie/MovieVideos";
-import PageNav from "../../../components/movie/PageNav";
-import { Video } from "../../../components/movie/MovieVideos";
+import { omdb } from "../../../../data/types";
+import MovieVideos, { MovieVideosProps } from "../../../../components/movie/MovieVideos";
+import PageNav from "../../../../components/movie/PageNav";
+import { Video } from "../../../../components/movie/MovieVideos";
 import { auth } from "@/lib/auth/authConfig";
 
 const OMBDAPI = process.env.NEXT_PUBLIC_OMDBAPI_URL;

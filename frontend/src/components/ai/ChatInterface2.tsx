@@ -21,18 +21,27 @@ interface ChatInterfaceProps {
   session_id: string;
   session?: Session | null;
   initialMessages?: CoreMessage[];
-  chatBg?: number;
-  inputBg?: number;
-  messageBg?: number;
+  chatBg: string;
+  inputBg: string;
+  messageBg: string;
 }
 
 const MWAPI = process.env.NEXT_PUBLIC_MWAPI;
 
-export function ChatInterface({session_id, session, initialMessages, inputScale = 110, chatBg = 500, inputBg = 500, messageBg = 500}: ChatInterfaceProps) {
+export function ChatInterface({
+  session_id, 
+  session, 
+  initialMessages, 
+  inputScale = 110, 
+  chatBg = "900", 
+  inputBg = "800",
+  messageBg = "900"
+}: ChatInterfaceProps) {
   noStore();
   const [logging, setLogging] = useState('thinking...');
   const [toolLogging, setToolLogging] = useState(false);
   const prevLoggingRef = useRef(logging);
+  
   
   const { messages, input, handleInputChange, handleSubmit, error, isLoading, reload, stop } = useChat({
     api: '/api/chat',
@@ -75,10 +84,10 @@ export function ChatInterface({session_id, session, initialMessages, inputScale 
   }, [logging]);
 
   return (
-    <div className={`flex flex-col h-full`}>
+    <div className={`flex flex-col h-full bg-neutral-${chatBg}`}>
       {/* Messages container */}
       <div className="flex-grow overflow-y-auto mb-4 no-scrollbar rounded-lg">
-        <Messages messages={messages} logging={logging} isLoading={isLoading} />
+        <Messages messages={messages} logging={logging} isLoading={isLoading} bg={messageBg}/>
       </div>
 
       {/* Input container */}
@@ -86,7 +95,7 @@ export function ChatInterface({session_id, session, initialMessages, inputScale 
         <div className={`w-1/3`}>
           <Input
             type="text"
-            className={`w-full rounded-full pr-10`}
+            className={`w-full rounded-full pr-10 bg-neutral-${inputBg} text-white`}
             placeholder="Summon the Wizard..."
             value={input}
             onKeyDown={(e) => {

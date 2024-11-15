@@ -62,13 +62,13 @@ export function NavProjects({
             {displayedSessions.map((session) => (
               <SidebarMenuItem key={session.session_id}>
                 <SidebarMenuButton asChild>
-                  <a href={`/chat/${session.session_id}`}>
+                  <Link href={`/chat/${session.session_id}`}>
                     <div className="bg-neutral-800 w-full p-2 rounded-lg hover:bg-neutral-850">
                       <span className="font-extralight">
                         {session.messages[0].content.substring(0, 24)}...
                       </span>
                     </div>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}

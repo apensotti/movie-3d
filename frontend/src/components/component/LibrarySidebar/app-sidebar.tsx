@@ -30,6 +30,7 @@ import {
 import { Session } from "next-auth";
 import HomeButton from "../HomeButton";
 
+
 // This is sample data.
 const data = {
   user: {
@@ -60,7 +61,7 @@ const data = {
     },
     {
       title: "Games",
-      url: "#",
+      url: "/games",
       icon: PiJoystickFill,
       iconColor: "/icons/Games.svg",
     },
@@ -100,7 +101,7 @@ export function AppSidebar({ user_session, ...props }: React.ComponentProps<type
 
   return (
     <SidebarProvider defaultOpen={isOpen} open={isOpen} onOpenChange={handleOpenChange}>
-      <Sidebar collapsible="icon" {...props} className="">
+      <Sidebar collapsible="icon" {...props} className="bg-neutral-900">
         <SidebarHeader className="mb-2">
           {isOpen && <HomeButton h={10} />}
           <SidebarTrigger size="icon" className="absolute top-2 right-2 z-50" />

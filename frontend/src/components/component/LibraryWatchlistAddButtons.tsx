@@ -37,7 +37,6 @@ const LibraryWatchlistAddButtons: React.FC<LibraryWatchlistAddButtonsProps> = ({
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>

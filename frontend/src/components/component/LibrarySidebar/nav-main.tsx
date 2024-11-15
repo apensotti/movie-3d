@@ -19,6 +19,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import Link from "next/link";
 
 type NavItem = {
   title: string
@@ -51,9 +52,9 @@ export function NavMain({
             className="group/collapsible"
           >
             <SidebarMenuItem>
+              <Link href={item.url}>
                 <SidebarMenuButton 
-                  tooltip={item.title} 
-                  onClick={() => window.location.href = item.url}
+                  tooltip={item.title}
                   onMouseEnter={() => setHoveredItems(prev => ({ ...prev, [item.title]: true }))}
                   onMouseLeave={() => setHoveredItems(prev => ({ ...prev, [item.title]: false }))}
                 >
@@ -66,6 +67,7 @@ export function NavMain({
                   )}
                   <span>{item.title}</span>
                 </SidebarMenuButton>
+                </Link>
             </SidebarMenuItem>
           </Collapsible>
         ))}

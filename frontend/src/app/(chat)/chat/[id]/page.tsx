@@ -21,7 +21,14 @@ export default async function Page(props: { params: { id: string } }) {
 
   return (
     <div className="flex flex-col h-screen">
-      <ChatInterface className="flex-grow" session_id={session_id} session={session} initialMessages={initialMessages}/>
+      <ChatInterface 
+        className="flex-grow" 
+        initialMessages={initialMessages}
+        session_id={session_id} 
+        chatBg="850"
+        inputBg="900"
+        messageBg="850"
+      />
     </div>
   );
 }

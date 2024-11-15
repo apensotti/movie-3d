@@ -1,8 +1,7 @@
 'use client';
 
 import LibraryWatchlist from '@/components/component/LibraryWatchlist';
-import '../globals.css'
-import Library from './library';
+import '../../globals.css'
 
 export default function Page() {
 

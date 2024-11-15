@@ -4,13 +4,18 @@ import { useState, useEffect } from 'react';
 import { useSession } from "next-auth/react";
 import { Loader2 } from "lucide-react";
 import PosterButtons from './PosterButtons';
-import { IoLibrary } from "react-icons/io5";
-import { FaStar } from "react-icons/fa";
 import { getRecommendations } from '@/hooks/searchHooks';
 import { omdb } from '@/data/types';
 import { Button } from '../ui/button';
 import { Switch } from '../ui/switch';
-import { Label } from '../ui/label';
+import { Label } from '../ui/label'; 
+
+import { IoLibrary } from "react-icons/io5";
+import { FaStar } from "react-icons/fa";
+import SearchBar from './SearchBar/SearchBar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { IoStatsChart } from "react-icons/io5"
+import LibraryMetrics from './LibraryMetrics/LibraryMetrics';
 
 const MWAPI = process.env.NEXT_PUBLIC_MWAPI!;
 const OMBDAPI = process.env.NEXT_PUBLIC_OMDBAPI_URL;
@@ -25,6 +30,10 @@ export default function LibraryWatchlist() {
     const [isLoading, setIsLoading] = useState(true);
     const [showRecommendations, setShowRecommendations] = useState(true);
     const { data: session } = useSession();
+    const [isChecked, setIsChecked] = useState(false);
+
+    const [libraryOmdb, setLibraryOmdb] = useState<omdb[]>([]);
+    const [watchlistOmdb, setWatchlistOmdb] = useState<omdb[]>([]);    
 
     useEffect(() => {
         const fetchMovies = async () => {
@@ -47,14 +56,16 @@ export default function LibraryWatchlist() {
                 setWatchlistMovies(watchlistData);
                 
                 const allMovies = [...libraryData, ...watchlistData];
-                const posterPromises = allMovies.map(imdbID =>
+                const moviePromises = allMovies.map(imdbID =>
                     fetch(`${OMBDAPI}?i=${imdbID}&apikey=${OMDB_API_KEY}`)
                         .then(res => res.json())
-                        .then(data => ({ [imdbID]: data.Poster }))
                 );
 
-                const posters = await Promise.all(posterPromises);
+                const movies = await Promise.all(moviePromises);
+                const posters = movies.map(movie => ({ [movie.imdbID]: movie.Poster }));
                 setMoviePosters(Object.assign({}, ...posters));
+                setLibraryOmdb(movies.filter(movie => libraryData.includes(movie.imdbID)));
+                setWatchlistOmdb(movies.filter(movie => watchlistData.includes(movie.imdbID)));
             } catch (error) {
                 console.error("Error fetching movies:", error);
             } finally {
@@ -137,34 +148,69 @@ export default function LibraryWatchlist() {
  
     return (
         <div className="h-full flex flex-col p-0">   
-            <div className='bg-neutral-850 flex flex-col p-4 shadow-lg overflow-hidden relative h-full gap-4'>
-                <div className="flex flex-row bg-neutral-900 rounded-full mx-44 mr-52 p-2">
-                    
+            <div className='bg-neutral-850 flex flex-col p-4 shadow-lg overflow-hidden relative h-full gap-0'>
+                <div className="flex flex-row items-center justify-between bg-neutral-900 rounded-full mx-44 mr-52 p-2 gap-3">
+                    <div className="flex items-center gap-1">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="flex items-center gap-2 w-28 rounded-full bg-neutral-800">
+                                    {activeTab === 'library' && <img src={'/icons/Library.svg'} className='h-4 w-4'/>}
+                                    {activeTab === 'watchlist' && <FaStar className="text-yellow-500" />}
+                                    {activeTab === 'metrics' && <IoStatsChart />}
+                                    {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem onClick={() => setActiveTab('library')} className="flex items-center gap-2">
+                                    <IoLibrary />
+                                    Library
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setActiveTab('watchlist')} className="flex items-center gap-2">
+                                    <FaStar />
+                                    Watchlist
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setActiveTab('metrics')} className="flex items-center gap-2">
+                                    <IoStatsChart />
+                                    Metrics
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                    <div className="flex-grow flex justify-center">
+                        <SearchBar/>
+                    </div>
+                    <div className="w-[88px]"></div>
                 </div>  
                 {isLoading ? (
                     <div className="flex justify-center items-center h-full">
                         <Loader2 className="h-8 w-8 animate-spin text-violet-600" />
                     </div>
                 ) : (
-                    <div className="overflow-y-auto no-scrollbar px-48 ">
+                    <div className="overflow-y-auto no-scrollbar px-48 pt-2">
                         <div className="grid grid-cols-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-16">
-                            {(activeTab === 'library' ? libraryMovies : watchlistMovies).map(imdbID => (
-                                <div key={imdbID} className="w-full pb-[130%] relative">
-                                    {moviePosters[imdbID] && (
-                                        <div className="absolute">
-                                            <PosterButtons
-                                                width={"80%"}
-                                                height={"80%"}
-                                                posterLink={moviePosters[imdbID]}
-                                                onLibraryClick={() => handleLibraryClick(imdbID)}
-                                                onWatchlistClick={() => handleWatchlistClick(imdbID)}
-                                                inLibrary={libraryMovies.includes(imdbID)}
-                                                inWatchlist={watchlistMovies.includes(imdbID)}
-                                            />
-                                        </div>
-                                    )}
+                            {activeTab === 'metrics' ? (
+                                <div className="w-full col-span-full">
+                                    <LibraryMetrics library={libraryOmdb} watchlist={watchlistOmdb} />
                                 </div>
-                            ))}
+                            ) : (
+                                (activeTab === 'library' ? libraryMovies : watchlistMovies).map(imdbID => (
+                                    <div key={imdbID} className="w-full pb-[130%] relative">
+                                        {moviePosters[imdbID] && (
+                                            <div className="absolute">
+                                                <PosterButtons
+                                                    width={"80%"}
+                                                    height={"80%"}
+                                                    posterLink={moviePosters[imdbID]}
+                                                    onLibraryClick={() => handleLibraryClick(imdbID)}
+                                                    onWatchlistClick={() => handleWatchlistClick(imdbID)}
+                                                    inLibrary={libraryMovies.includes(imdbID)}
+                                                    inWatchlist={watchlistMovies.includes(imdbID)}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                ))
+                            )}
                         </div>
                     </div>
                 )}
