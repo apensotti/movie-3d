@@ -4,6 +4,8 @@ import { Inter } from 'next/font/google';
 import { auth } from '@/lib/auth/authConfig';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 
+import "../../globals.css"
+import { AppSidebar } from '@/components/component/LibrarySidebar/app-sidebar';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -15,7 +17,12 @@ async function layout({children}: Readonly<{children: React.ReactNode;}>) {
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark">
           <AuthProvider session={session}>
-            {children}
+            <div className="flex flex-grow h-full w-full">                  
+                <AppSidebar user_session={session || undefined}/>
+                <div className="flex-grow h-screen">
+                  {children}
+                </div>
+              </div>
           </AuthProvider>
         </ThemeProvider>
       </body>

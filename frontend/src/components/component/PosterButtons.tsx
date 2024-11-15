@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import LibraryWatchlistAddButtons from './LibraryWatchlistAddButtons';
+import Link from 'next/link';
 
 interface PosterButtonsProps {
   posterLink: string;
+  imdbID?: string;
   onLibraryClick: () => void;
   onWatchlistClick: () => void;
   inLibrary: boolean;
@@ -14,6 +16,7 @@ interface PosterButtonsProps {
 
 const PosterButtons: React.FC<PosterButtonsProps> = ({ 
   posterLink, 
+  imdbID,
   onLibraryClick, 
   onWatchlistClick, 
   inLibrary,
@@ -45,6 +48,9 @@ const PosterButtons: React.FC<PosterButtonsProps> = ({
           />
         </div>
       )}
+      <Link href={`/movies/${imdbID}`}>
+        <div className="absolute bottom-0 left-0 right-0 h-1/3 cursor-pointer" />
+      </Link>
     </div>
   );
 };

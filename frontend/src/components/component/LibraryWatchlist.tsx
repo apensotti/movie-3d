@@ -200,6 +200,7 @@ export default function LibraryWatchlist() {
                                                 <PosterButtons
                                                     width={"80%"}
                                                     height={"80%"}
+                                                    imdbID={imdbID}
                                                     posterLink={moviePosters[imdbID]}
                                                     onLibraryClick={() => handleLibraryClick(imdbID)}
                                                     onWatchlistClick={() => handleWatchlistClick(imdbID)}
