@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Session } from "next-auth";
 import HomeButton from "../HomeButton";
+import { ProfileDataProvider } from "../ProfileDataProvider";
 
 
 // This is sample data.
@@ -117,5 +118,6 @@ export function AppSidebar({ user_session, ...props }: React.ComponentProps<type
     </SidebarProvider>
   )
 }
+
 
 

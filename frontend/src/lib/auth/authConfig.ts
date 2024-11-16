@@ -67,7 +67,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const user: User = {
           id: userDoc._id.toString(), // MongoDB ObjectId needs to be converted to a string
           email: userDoc.email,
-          password: userDoc.password, // You can omit this in the returned object if you want
+          password: userDoc.password,
         };
 
         return user;

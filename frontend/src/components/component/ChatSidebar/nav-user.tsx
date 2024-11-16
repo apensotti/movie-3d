@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from 'react'
 import {
   BadgeCheck,
   Bell,
@@ -37,17 +38,29 @@ import defaultAvatar from '@/assets/default-avatar.png';
 import { MdOutlineExitToApp } from "react-icons/md"
 
 import { signOut } from "next-auth/react"
+import Link from "next/link";
+import { getProfileImage } from '@/lib/utils';
+import { useProfileData } from '@/hooks/useProfileData';
 
-export function NavUser({
-  user,
-}: {
-  user: Session | undefined
-}) {
+export interface ProfileData {
+  username?: string;
+  name?: string;
+  favoriteMovie?: string;
+  bio?: string;
+  tagline?: string;
+  links?: string;
+  image?: string;
+  email?: string;
+  userId?: string;
+}
+
+export function NavUser({ user }: { user: Session | undefined }) {
+  const profileData = useProfileData() as ProfileData | null
   const { isMobile } = useSidebar()
-
-  const name = user?.user?.email?.split('@')[0] ?? '';
-  const email = user?.user?.email ?? '';
-  const avatar = user?.user?.image ?? '/defaultprofile2.png';
+  
+  const displayName = (profileData?.username || user?.user?.email?.split('@')[0]) ?? ''
+  const email = user?.user?.email ?? ''
+  const profileImage = profileData?.image || user?.user?.image || '/defaultprofile2.png'
 
   const handleSignOut = () => {
     signOut({
@@ -65,12 +78,14 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={avatar} alt={email} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarImage src={profileImage || '/defaultprofile2.png'} alt={email} />
+                <AvatarFallback className="rounded-lg">
+                  {displayName[0]?.toUpperCase() || 'U'}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{name}</span>
-                <span className="truncate text-xs">{email}</span>
+                <span className="truncate font-semibold">{displayName}</span>
+                <span className="truncate text-xs">{profileData?.tagline || email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -84,12 +99,14 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={avatar} alt={name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarImage src={profileImage || '/defaultprofile2.png'} alt={displayName} />
+                  <AvatarFallback className="rounded-lg">
+                    {displayName[0]?.toUpperCase() || 'U'}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{name}</span>
-                  <span className="truncate text-xs">{email}</span>
+                  <span className="truncate font-semibold">{displayName}</span>
+                  <span className="truncate text-xs">{profileData?.tagline || email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -102,12 +119,14 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator /> */}
             <DropdownMenuGroup>
+              <Link href="/profile">
               <DropdownMenuItem>
                 <div className='flex items-center gap-2'>
                   <RiAccountCircleLine className='text-lg'/>
                   Account
               </div>
               </DropdownMenuItem>
+              </Link>
               {/* <DropdownMenuItem>
                 <CreditCard />
                 Billing

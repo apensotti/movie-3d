@@ -21,27 +21,66 @@ const MWAPI = process.env.NEXT_PUBLIC_MWAPI!;
 const OMBDAPI = process.env.NEXT_PUBLIC_OMDBAPI_URL;
 const OMDB_API_KEY = process.env.NEXT_PUBLIC_OMDBAPI_KEY;
 
-export default function LibraryWatchlist() {
-    const [activeTab, setActiveTab] = useState('library');
-    const [libraryMovies, setLibraryMovies] = useState<string[]>([]);
-    const [watchlistMovies, setWatchlistMovies] = useState<string[]>([]);
-    const [moviePosters, setMoviePosters] = useState<{ [key: string]: string }>({});
-    const [recommendationMovies, setRecommendationMovies] = useState<omdb[]>([])
-    const [isLoading, setIsLoading] = useState(true);
-    const [showRecommendations, setShowRecommendations] = useState(true);
-    const { data: session } = useSession();
-    const [isChecked, setIsChecked] = useState(false);
+interface Props {
+    initialLibrary: string[];
+    initialWatchlist: string[];
+    initialPosters: Record<string, string>;
+    initialLibraryOmdb: omdb[];
+    initialWatchlistOmdb: omdb[];
+    onLibraryUpdate: (library: string[]) => void;
+    onWatchlistUpdate: (watchlist: string[]) => void;
+    onPostersUpdate: (posters: Record<string, string>) => void;
+    onLibraryOmdbUpdate: (library: omdb[]) => void;
+    onWatchlistOmdbUpdate: (watchlist: omdb[]) => void;
+}
 
-    const [libraryOmdb, setLibraryOmdb] = useState<omdb[]>([]);
-    const [watchlistOmdb, setWatchlistOmdb] = useState<omdb[]>([]);    
+export function LibraryWatchlist({
+    initialLibrary,
+    initialWatchlist,
+    initialPosters,
+    initialLibraryOmdb,
+    initialWatchlistOmdb,
+    onLibraryUpdate,
+    onWatchlistUpdate,
+    onPostersUpdate,
+    onLibraryOmdbUpdate,
+    onWatchlistOmdbUpdate
+}: Props) {
+    const [activeTab, setActiveTab] = useState('library');
+    const [libraryMovies, setLibraryMovies] = useState<string[]>(initialLibrary);
+    const [watchlistMovies, setWatchlistMovies] = useState<string[]>(initialWatchlist);
+    const [moviePosters, setMoviePosters] = useState<{ [key: string]: string }>(initialPosters);
+    const [libraryOmdb, setLibraryOmdb] = useState<omdb[]>(initialLibraryOmdb);
+    const [watchlistOmdb, setWatchlistOmdb] = useState<omdb[]>(initialWatchlistOmdb);
+    const [recommendationMovies, setRecommendationMovies] = useState<omdb[]>([]);
+    const { data: session } = useSession();
+
+    const [lastFetchTime, setLastFetchTime] = useState<number>(0);
 
     useEffect(() => {
+        const loadFromLocalStorage = () => {
+            const stored = {
+                library: JSON.parse(localStorage.getItem('libraryMovies') || '[]'),
+                watchlist: JSON.parse(localStorage.getItem('watchlistMovies') || '[]'),
+                posters: JSON.parse(localStorage.getItem('moviePosters') || '{}'),
+                libraryOmdb: JSON.parse(localStorage.getItem('libraryOmdb') || '[]'),
+                watchlistOmdb: JSON.parse(localStorage.getItem('watchlistOmdb') || '[]'),
+                lastFetch: Number(localStorage.getItem('lastFetchTime') || '0')
+            };
+
+            setLibraryMovies(stored.library);
+            setWatchlistMovies(stored.watchlist);
+            setMoviePosters(stored.posters);
+            setLibraryOmdb(stored.libraryOmdb);
+            setWatchlistOmdb(stored.watchlistOmdb);
+            setLastFetchTime(stored.lastFetch);
+        };
+
         const fetchMovies = async () => {
             const userEmail = session?.user?.email;
             if (!userEmail) return;
 
             try {
-                setIsLoading(true);
                 const libraryResponse = await fetch(`${MWAPI}/users/${userEmail}/library`);
                 const watchlistResponse = await fetch(`${MWAPI}/users/${userEmail}/watchlist`);
                 
@@ -66,19 +105,31 @@ export default function LibraryWatchlist() {
                 setMoviePosters(Object.assign({}, ...posters));
                 setLibraryOmdb(movies.filter(movie => libraryData.includes(movie.imdbID)));
                 setWatchlistOmdb(movies.filter(movie => watchlistData.includes(movie.imdbID)));
+
+                // Save to localStorage
+                localStorage.setItem('libraryMovies', JSON.stringify(libraryData));
+                localStorage.setItem('watchlistMovies', JSON.stringify(watchlistData));
+                localStorage.setItem('moviePosters', JSON.stringify(Object.assign({}, ...posters)));
+                localStorage.setItem('libraryOmdb', JSON.stringify(movies.filter(movie => libraryData.includes(movie.imdbID))));
+                localStorage.setItem('watchlistOmdb', JSON.stringify(movies.filter(movie => watchlistData.includes(movie.imdbID))));
+                localStorage.setItem('lastFetchTime', Date.now().toString());
             } catch (error) {
                 console.error("Error fetching movies:", error);
-            } finally {
-                setIsLoading(false);
             }
         };
 
-        fetchMovies();
-    }, []);
+        // Load initial data from localStorage
+        loadFromLocalStorage();
+
+        // Only fetch if data is older than 5 minutes or doesn't exist
+        const FIVE_MINUTES = 5 * 60 * 1000;
+        if (Date.now() - lastFetchTime > FIVE_MINUTES) {
+            fetchMovies();
+        }
+    }, [session]);
 
     useEffect(() => {
         const fetchRecs = async () => {
-            setIsLoading(true);
             const userEmail = session?.user?.email;
             if (!userEmail) return;
 
@@ -111,12 +162,15 @@ export default function LibraryWatchlist() {
             });
             if (!response.ok) throw new Error('Failed to update library');
             
-            setLibraryMovies(prev => 
-                action === 'add' ? [...prev, imdbID] : prev.filter(id => id !== imdbID)
-            );
-            if (action === 'add') {
-                setWatchlistMovies(prev => prev.filter(id => id !== imdbID));
-            }
+            const newLibraryMovies = action === 'add' ? [...libraryMovies, imdbID] : libraryMovies.filter(id => id !== imdbID);
+            const newWatchlistMovies = action === 'add' ? watchlistMovies.filter(id => id !== imdbID) : watchlistMovies;
+            
+            setLibraryMovies(newLibraryMovies);
+            setWatchlistMovies(newWatchlistMovies);
+            
+            // Update localStorage
+            localStorage.setItem('libraryMovies', JSON.stringify(newLibraryMovies));
+            localStorage.setItem('watchlistMovies', JSON.stringify(newWatchlistMovies));
         } catch (error) {
             console.error("Error updating library:", error);
         }
@@ -135,12 +189,15 @@ export default function LibraryWatchlist() {
             });
             if (!response.ok) throw new Error('Failed to update watchlist');
             
-            setWatchlistMovies(prev => 
-                action === 'add' ? [...prev, imdbID] : prev.filter(id => id !== imdbID)
-            );
-            if (action === 'add') {
-                setLibraryMovies(prev => prev.filter(id => id !== imdbID));
-            }
+            const newWatchlistMovies = action === 'add' ? [...watchlistMovies, imdbID] : watchlistMovies.filter(id => id !== imdbID);
+            const newLibraryMovies = action === 'add' ? libraryMovies.filter(id => id !== imdbID) : libraryMovies;
+            
+            setWatchlistMovies(newWatchlistMovies);
+            setLibraryMovies(newLibraryMovies);
+            
+            // Update localStorage
+            localStorage.setItem('watchlistMovies', JSON.stringify(newWatchlistMovies));
+            localStorage.setItem('libraryMovies', JSON.stringify(newLibraryMovies));
         } catch (error) {
             console.error("Error updating watchlist:", error);
         }
@@ -181,63 +238,35 @@ export default function LibraryWatchlist() {
                     </div>
                     <div className="w-[88px]"></div>
                 </div>  
-                {isLoading ? (
-                    <div className="flex justify-center items-center h-full">
-                        <Loader2 className="h-8 w-8 animate-spin text-violet-600" />
-                    </div>
-                ) : (
-                    <div className="overflow-y-auto no-scrollbar px-48 pt-2">
-                        <div className="grid grid-cols-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-16">
-                            {activeTab === 'metrics' ? (
-                                <div className="w-full col-span-full">
-                                    <LibraryMetrics library={libraryOmdb} watchlist={watchlistOmdb} />
+                <div className="overflow-y-auto no-scrollbar px-48 pt-2">
+                    <div className="grid grid-cols-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-16">
+                        {activeTab === 'metrics' ? (
+                            <div className="w-full col-span-full">
+                                <LibraryMetrics library={libraryOmdb} watchlist={watchlistOmdb} />
+                            </div>
+                        ) : (
+                            (activeTab === 'library' ? libraryMovies : watchlistMovies).map(imdbID => (
+                                <div key={imdbID} className="w-full pb-[130%] relative">
+                                    {moviePosters[imdbID] && (
+                                        <div className="absolute">
+                                            <PosterButtons
+                                                width={"80%"}
+                                                height={"80%"}
+                                                imdbID={imdbID}
+                                                posterLink={moviePosters[imdbID]}
+                                                onLibraryClick={() => handleLibraryClick(imdbID)}
+                                                onWatchlistClick={() => handleWatchlistClick(imdbID)}
+                                                inLibrary={libraryMovies.includes(imdbID)}
+                                                inWatchlist={watchlistMovies.includes(imdbID)}
+                                            />
+                                        </div>
+                                    )}
                                 </div>
-                            ) : (
-                                (activeTab === 'library' ? libraryMovies : watchlistMovies).map(imdbID => (
-                                    <div key={imdbID} className="w-full pb-[130%] relative">
-                                        {moviePosters[imdbID] && (
-                                            <div className="absolute">
-                                                <PosterButtons
-                                                    width={"80%"}
-                                                    height={"80%"}
-                                                    imdbID={imdbID}
-                                                    posterLink={moviePosters[imdbID]}
-                                                    onLibraryClick={() => handleLibraryClick(imdbID)}
-                                                    onWatchlistClick={() => handleWatchlistClick(imdbID)}
-                                                    inLibrary={libraryMovies.includes(imdbID)}
-                                                    inWatchlist={watchlistMovies.includes(imdbID)}
-                                                />
-                                            </div>
-                                        )}
-                                    </div>
-                                ))
-                            )}
-                        </div>
+                            ))
+                        )}
                     </div>
-                )}
-                
-            </div>
-            {/* <div>
-            {isLoading ? (
-                    <div className="flex justify-center items-center h-full">
-                        <Loader2 className="h-8 w-8 animate-spin text-violet-600" />
-                    </div>
-                ) : (
-                <div className="flex overflow-x-auto gap-2 p-4 ">
-                    {recommendationMovies.map(movie => (
-                        <PosterButtons
-                            width={"5%"}
-                            height={"5%"}
-                            posterLink={movie.Poster}
-                            onLibraryClick={() => handleLibraryClick(movie.imdbID)}
-                            onWatchlistClick={() => handleWatchlistClick(movie.imdbID)}
-                            inLibrary={libraryMovies.includes(movie.imdbID)}
-                            inWatchlist={watchlistMovies.includes(movie.imdbID)}
-                        />
-                    ))}
                 </div>
-                )}
-            </div> */}
+            </div>
         </div>
     );
 }

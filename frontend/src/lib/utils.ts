@@ -145,3 +145,14 @@ export function convertToUIMessages(
     return chatMessages;
   }, []);
 }
+
+export const getProfileImage = (email: string): string => {
+  if (typeof window === 'undefined') return '/defaultprofile2.png';
+  return localStorage.getItem(`profile-image-${email}`) || '/defaultprofile2.png';
+}
+
+export const setProfileImage = (email: string, imageData: string) => {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(`profile-image-${email}`, imageData);
+}
+

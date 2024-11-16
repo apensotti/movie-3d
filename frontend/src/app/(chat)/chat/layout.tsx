@@ -8,6 +8,7 @@ import { AppSidebar } from '@/components/component/ChatSidebar/app-sidebar';
 import '../../globals.css'
 import { ThemeProvider } from 'next-themes';
 import { getMessages, getUserSessions } from '@/app/(chat)/actions';
+import { ProfileDataProvider } from '@/components/component/ProfileDataProvider';
 
 export const maxDuration = 30;
 export const dynamic = 'force-dynamic'
@@ -33,6 +34,9 @@ export default async function RootLayout({
                 <div className="flex flex-grow overflow-hidden">                  
                   <AppSidebar sessions={sessions || []} user_session={session || undefined}/>
                   <div className="flex-grow flex flex-col overflow-hidden" >
+                    {session?.user?.email && (
+                      <ProfileDataProvider email={session.user.email} />
+                    )}
                     {children}
                   </div>
                 </div>

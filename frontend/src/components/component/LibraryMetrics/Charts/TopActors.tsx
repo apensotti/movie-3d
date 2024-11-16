@@ -8,6 +8,9 @@ const TMDBKEY = process.env.NEXT_PUBLIC_TMDB_KEY!;
 const TMDBIMAGEURL = process.env.NEXT_PUBLIC_TMDB_IMAGE_URL!;
 
 const searchActor = async (name: string) => {
+  if (name === "Charles Chaplin") {
+    name = "Charlie Chaplin";
+  }
   const response = await fetch(`${TMDB}/search/person?query=${encodeURIComponent(name)}&api_key=${TMDBKEY}`);
   const data = await response.json();
   return data.results[0];
@@ -40,6 +43,7 @@ const TopActors = ({library}:{library?:omdb[]}) => {
           const movies = await response.json();
           const tmdbActor = await searchActor(actor);
           const imageUrl = tmdbActor?.profile_path ? await getActorImage(tmdbActor.profile_path) : null;
+          console.log(tmdbActor);
           return {
             actor,
             count,
@@ -56,6 +60,8 @@ const TopActors = ({library}:{library?:omdb[]}) => {
       getActorData();
     }
   }, [library]);
+
+  console.log(actorData);
 
   return (
     <Card className="flex flex-col bg-neutral-900 w-full h-1/2 shadow-md">

@@ -1,3 +1,5 @@
+"use client"
+
 import { Input } from '@/components/ui/input2'
 import React, { useEffect, useState, useRef } from 'react'
 import { omdb } from '@/data/types'
@@ -58,17 +60,17 @@ const SearchBar = () => {
     }, []);
 
     return (
-        <div className="relative w-96 z-50">
+        <div className="relative w-110 z-50">
             <Input 
                 ref={inputRef}
                 placeholder='Search Movies' 
-                className='rounded-full w-full' 
+                className='rounded-full h-9 w-full' 
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
             />
             {showResults && (
                 <div ref={resultsRef} className="absolute w-full mt-1 bg-neutral-900 rounded-md border border-neutral-800 shadow-lg ">
-                    <ul className="max-h-[300px] overflow-y-auto no-scrollbar">
+                    <ul className="max-h-[450px] overflow-y-auto no-scrollbar">
                         {movies.map((movie, index) => (
                             <div 
                                 key={index} 
@@ -78,9 +80,9 @@ const SearchBar = () => {
                                     setShowResults(false)
                                 }}
                             >
-                                <img src={movie.Poster} width={'15%'} height={'100%'}></img>
+                                <img src={movie.Poster} width={'13%'} height={'100%'}></img>
                                 <div className='flex flex-row gap-2 items-center'>
-                                    <div className={`font-bold ${movie.Title.length > 20 ? 'text-xs' : 'text-sm'}`}>{movie.Title}</div>
+                                    <div className={`font-bold ${movie.Title.length > 20 ? 'text-md' : 'text-lg'}`}>{movie.Title}</div>
                                     <div className='text-xs'>{movie.Rated === 'Not Rated' ? 'N/A' : movie.Rated}</div>
                                 </div>
                             </div>

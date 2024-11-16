@@ -8,6 +8,7 @@ import { AI } from '@/components/ai/ai';
 import { auth } from '@/lib/auth/authConfig';
 import { AppSidebar } from '@/components/component/LibrarySidebar/app-sidebar';
 import { ThemeProvider } from 'next-themes';
+import { ProfileDataProvider } from '@/components/component/ProfileDataProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,6 +28,9 @@ export default async function RootLayout({
               <div className="flex flex-grow h-full w-full">                  
                 <AppSidebar user_session={session || undefined}/>
                 <div className="flex-grow h-screen">
+                  {session?.user?.email && (
+                    <ProfileDataProvider email={session.user.email} />
+                  )}
                   {children}
                 </div>
               </div>

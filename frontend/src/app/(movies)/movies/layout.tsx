@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/components/ui/theme-provider';
 
 import "../../globals.css"
 import { AppSidebar } from '@/components/component/LibrarySidebar/app-sidebar';
+import { ProfileDataProvider } from '@/components/component/ProfileDataProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,6 +21,9 @@ async function layout({children}: Readonly<{children: React.ReactNode;}>) {
             <div className="flex flex-grow h-full w-full">                  
                 <AppSidebar user_session={session || undefined}/>
                 <div className="flex-grow h-screen">
+                  {session?.user?.email && (
+                    <ProfileDataProvider email={session.user.email} />
+                  )}
                   {children}
                 </div>
               </div>
