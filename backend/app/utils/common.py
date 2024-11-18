@@ -56,7 +56,7 @@ def generate_graph_data(ids: list[str]):
     return {"nodes": nodes, "links": links}
 
 
-def search_movies_in_mysql(title='', keywords=[], cast=[], crew=[], date_range=[]):
+def search_movies_in_mysql(title='', keywords=[], cast=[], crew=[], date_range=[], vote_average={}, popularity={}, limit=0):
     # Establish a connection to the MySQL database
     connection = mysql.connector.connect(
         host="mysql",
@@ -74,7 +74,6 @@ def search_movies_in_mysql(title='', keywords=[], cast=[], crew=[], date_range=[
     crew_filter = ' OR '.join([f"LOWER(crew) LIKE '%{member.lower()}%'" for member in crew])
     processed_title = re.sub(r'[^a-zA-Z0-9\s]', '', title.lower())
 
-    sql = 'SELECT imdb_id FROM movies ORDER BY RAND() LIMIT 100'
     sql2 = 'SELECT imdb_id FROM movies'
     conditions = []
 
@@ -89,10 +88,23 @@ def search_movies_in_mysql(title='', keywords=[], cast=[], crew=[], date_range=[
     if date_range:
         start_date, end_date = date_range
         conditions.append(f"release_date BETWEEN '{start_date}' AND '{end_date}'")
-
+    if vote_average and (vote_average.get("min") is not None or vote_average.get("max") is not None):
+        if vote_average.get("min") is not None:
+            conditions.append(f"vote_average >= {vote_average['min']}")
+        if vote_average.get("max") is not None:
+            conditions.append(f"vote_average <= {vote_average['max']}")
+    if popularity and (popularity.get("min") is not None or popularity.get("max") is not None):
+        if popularity.get("min") is not None:
+            conditions.append(f"popularity >= {popularity['min']}")
+        if popularity.get("max") is not None:
+            conditions.append(f"popularity <= {popularity['max']}")
     if conditions:
         sql2 += ' WHERE ' + ' AND '.join(conditions)
-        sql2 += 'LIMIT 100'
+    if limit:
+        sql2 += f' LIMIT {limit}'
+    if limit == None:
+        sql2 += ' LIMIT 100'
+
     
     cursor.execute(sql2)
     results = cursor.fetchall()

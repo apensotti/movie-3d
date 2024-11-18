@@ -37,42 +37,23 @@ export default function ProfileForm({
     const file = e.target.files?.[0]
     if (file && session?.user?.id) {
       try {
-        // Create FormData for file upload
-        const formData = new FormData()
-        formData.append('file', file)
-
-        // Upload image to server
-        const uploadResponse = await fetch('/api/profile/upload', {
-          method: 'POST',
-          body: formData,
-        })
-
-        if (!uploadResponse.ok) {
-          throw new Error('Failed to upload image')
+        // Convert file to base64 string
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          const base64String = reader.result as string
+          
+          // Save to local storage
+          localStorage.setItem(`profile-image-${session.user?.id}`, base64String)
+          
+          // Update local state
+          setProfileData(prev => ({ ...prev, image: base64String }))
+          if (session.user?.email) {
+            setProfileImage(session.user.email, base64String)
+          }
+          
+          toast.success('Profile image updated successfully')
         }
-
-        const { imageUrl } = await uploadResponse.json()
-
-        // Update profile with new image URL
-        const updateResponse = await fetch('/api/profile/update', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userId: session.user.id,
-            image: imageUrl
-          }),
-        })
-
-        if (!updateResponse.ok) {
-          throw new Error('Failed to update profile image')
-        }
-
-        // Update local state
-        setProfileData(prev => ({ ...prev, image: imageUrl }))
-        setProfileImage(session.user.email || '', imageUrl)
-        toast.success('Profile image updated successfully')
+        reader.readAsDataURL(file)
       } catch (error) {
         console.error('Error updating profile image:', error)
         toast.error('Failed to update profile image')
