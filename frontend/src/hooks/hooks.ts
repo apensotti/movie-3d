@@ -68,7 +68,6 @@ export const useFetchMovies = (ids: string[], OMBDAPI: string, OMBDKEY: string, 
         console.error("Error fetching movies:", error);
       }
     };
-
     if (ids.length > 0) {
       fetchMovies();
     }
@@ -99,3 +98,5 @@ export const useChat = (query: string, MWAPI: string, setMessages: React.Dispatc
     }
   }, [query, MWAPI, setMessages]);
 };
+
+

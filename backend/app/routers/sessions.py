@@ -6,11 +6,11 @@ from utils.mongodb import get_user_sessions, create_session, update_session, get
 router = APIRouter(prefix="/sessions", tags=["Sessions"])
 
 @router.post("/create_session/")
-async def create_session(req: ChatRequest):
+async def create(req: ChatRequest):
     return await create_session(req)
 
 @router.post("/update_session/")
-async def update_session(req: ChatRequest):
+async def update(req: ChatRequest):
     return await update_session(req)
 
 @router.get("/get_user_sessions/")

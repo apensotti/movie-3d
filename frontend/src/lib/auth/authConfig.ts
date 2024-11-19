@@ -67,7 +67,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const user: User = {
           id: userDoc._id.toString(), // MongoDB ObjectId needs to be converted to a string
           email: userDoc.email,
-          password: userDoc.password, // You can omit this in the returned object if you want
+          password: userDoc.password,
         };
 
         return user;
@@ -84,6 +84,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       session.user.id = token.id as string; // Add user ID to the session
       return session;
+    },
+  },
+  useSecureCookies: false, // Set to false for local development
+  cookies: {
+    csrfToken: {
+      name: 'next-auth.csrf-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: false, // Set to false for local development
+      },
     },
   },
 });

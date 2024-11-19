@@ -37,6 +37,38 @@ export interface NodeObject {
   [others: string]: any; // Allow additional properties
 }
 
+export interface MovieDatabase {
+  adult: boolean;
+  belongs_to_collection: string | null;
+  budget: number;
+  genres: string[];
+  homepage: string | null;
+  id: number;
+  imdb_id: string;
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path: string | null;
+  production_companies: string[];
+  production_countries: string[];
+  release_date: string;
+  revenue: number;
+  runtime: number | null;
+  spoken_languages: string[];
+  status: string;
+  tagline: string | null;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+  cast: string[];
+  crew: string[];
+  keywords: string[];
+  textual_representation: string;
+  plot: string;
+}
+
 export interface omdb{
   Title:string,
   Year:string,

@@ -1,8 +1,10 @@
+from models.schema import all_sessions
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.encoders import jsonable_encoder
 from models.models import user, session
 import os
 import uuid
+from bson import ObjectId
 
 ## Ping MongoDB
 MONGODB_URI = os.getenv("MONGODB_URI")
@@ -46,13 +48,12 @@ async def validate_user(email):
 
 async def create_session(req):
     db = get_db()
-    session_uuid = str(uuid.uuid4())
-    await db.sessions.insert_one({"session_id": session_uuid, "email": req.email,"messages": jsonable_encoder(req.messages)})   
-    return {"status_code": 200, "id": session_uuid}
+    await db.sessions.insert_one({"session_id": req.session_id, "email": req.email,"messages": jsonable_encoder(req.messages)})   
+    return {"status_code": 200, "id": req.session_id}
 
 async def update_session(req):
     db = get_db()
-    session = db.sessions.find_one({"session_id": req.session_id})
+    session = await db.sessions.find_one({"session_id": req.session_id})
     if session:
         await db.sessions.update_one(
             {"session_id": req.session_id}, 
@@ -63,16 +64,34 @@ async def update_session(req):
 
 async def get_user_sessions(email):
     db = get_db()
-    sessions = await db.sessions.find_many({"email": email})
-    return sessions
+    cursor = db.sessions.find({"email": email})
+    sessions = await cursor.to_list(length=None)
+    return [
+        {
+            **session,
+            "_id": str(session["_id"])  # Convert ObjectId to string
+        }
+        for session in sessions
+    ]
 
 async def get_session(session_id):
     db = get_db()
     session = await db.sessions.find_one({"session_id": session_id})
+    if session:
+        session["_id"] = str(session["_id"])  # Convert ObjectId to string
     return session
 
 async def get_messages(session_id):
     session = await get_session(session_id)
-    return session['messages']
+    return session['messages'] if session else None
 
 
+async def get_library(email: str):
+    db = get_db()
+    library = await db.users.find_one({"email": email})
+    return library['library'] if library else None
+
+async def get_watchlist(email: str):
+    db = get_db()
+    watchlist = await db.users.find_one({"email": email})
+    return watchlist['watchlist'] if watchlist else None

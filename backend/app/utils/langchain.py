@@ -9,10 +9,25 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_community.vectorstores import FAISS
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from fastapi.responses import StreamingResponse
+from dotenv import load_dotenv
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+import string
+import json
+import pandas as pd
+from utils.mongodb import get_library, get_watchlist
+load_dotenv()
+
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('punkt_tab')
+
 
 llm = ChatOpenAI(model="gpt-4o", streaming=True)
 llm_embeddings = OpenAIEmbeddings(model='text-embedding-3-small')
-vdb = FAISS.load_local('data/faissvdb/', llm_embeddings, allow_dangerous_deserialization=True)
+vdb = FAISS.load_local('data/description/', llm_embeddings, allow_dangerous_deserialization=True)
+recommendation_vdb = FAISS.load_local('data/recommendation/', llm_embeddings, allow_dangerous_deserialization=True)
 
 #NLP
 def split_into_sentences(paragraph):
@@ -23,6 +38,19 @@ def get_st_embeddings(text, model: SentenceTransformer):
     inputs = model.encode(text, convert_to_numpy=True)
     return inputs
 
+def faissvdb(k):
+    retriever = vdb.as_retriever(
+        search_type="similarity",
+        search_kwargs={"k": k},
+    )
+    return retriever
+
+def faissvdb_recommendations(k):
+    retriever = recommendation_vdb.as_retriever(
+        search_type="mmr",
+        search_kwargs={"k": k, "fetch_k": k,"filter": {"language": "en"}},
+    )
+    return retriever
 
 ## Faiss Vector Database
 def search_movies(query, k):
@@ -33,14 +61,9 @@ def search_movies(query, k):
     for result in results:
         movies.append(result.metadata)
 
-    return movies
+    sorted_movies = sorted(movies, key=lambda x: x['popularity'], reverse=True)
+    return sorted_movies
 
-def faissvdb(k):
-    retriever = vdb.as_retriever(
-        search_type="similarity",
-        search_kwargs={"k": k},
-    )
-    return retriever
 
 def rag_chain():
     contextualize_q_system_prompt = (
@@ -66,11 +89,20 @@ def rag_chain():
     )
 
     qa_system_prompt = ('''                    
-    Given the following movie context, I would like you to return the title,
-    show it's directed by, when it was released, and summarize the plot,
-    the plot of the movie. If you are not sure, you can ask me for more
-    information. If the question is realated to anything other than movies or celebrities,
-    please respond with, "I'm sorry, my knowlege is limited to movies and celebrities."
+    You are given a few similar movies to the users query. I would like you
+    to first say Here is a few movies that match your description. Then list the movies
+    the user will then choose one of the movies and ask for more information about the movie.
+    
+    I would also like you to respond in this markdown format:
+    Here are a few movies that match your description: \n\n
+    ### Movie Title: \n
+    Description: \n
+    ### Movie Title: \n
+    Description: \n
+    ### Movie Title: \n
+    Description: \n\n
+    Which movie would you like more information on? \n\n
+    "
     \n\n
     {context}
                     
@@ -126,3 +158,48 @@ class ChatRequest():
         self.messages.append(SystemMessage(content=full_message))
     
         return StreamingResponse(generator(), media_type='text/event-stream')
+
+async def get_recommendations(email: str, library_bool: bool, exclusive: bool):
+    data = pd.read_json('data/movies.json')
+
+    library = await get_library(email)
+    watchlist = await get_watchlist(email)
+
+    keywords_set = set()
+    genres_set = set()
+    popularity_list = list()
+
+    profile = ''
+
+    if library_bool == True:
+        movie_data = data[data['imdb_id'].isin(library)]    
+        for index, row in movie_data.iterrows():
+            keywords_set.update(row['keywords'])
+            genres_set.update(row['genres'])
+            popularity_list.append(row['popularity'])
+        profile = " ".join(list(keywords_set)) + " ".join(list(genres_set)) + " " + str(np.mean(popularity_list))
+        
+    elif library_bool == False:
+        movie_data = data[data['imdb_id'].isin(watchlist)]
+        for index, row in movie_data.iterrows():
+            keywords_set.update(row['keywords'])
+            genres_set.update(row['genres'])
+            popularity_list.append(row['popularity'])
+        profile = " ".join(list(keywords_set)) + " ".join(list(genres_set)) + " " + str(np.mean(popularity_list))
+
+    movies = faissvdb_recommendations(k=50).invoke(profile)
+
+    if library_bool:
+        if exclusive:
+            movies = [movie for movie in movies if movie.metadata['imdb_id'] not in library]
+        else:
+            movies = [movie for movie in movies if movie.metadata['imdb_id'] not in library]
+    else:
+        if exclusive:
+            movies = [movie for movie in movies if movie.metadata['imdb_id'] not in watchlist]
+        else:
+            movies = [movie for movie in movies if movie.metadata['imdb_id'] not in watchlist]
+
+    ids = [movie.metadata['imdb_id'] for movie in movies]
+
+    return ids

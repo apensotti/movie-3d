@@ -3,15 +3,12 @@
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useRef } from "react";
-import { Button } from "../ui/button";
-import { PrismaClient } from "@prisma/client"; // Make sure Prisma is correctly set up
 import { register } from "@/lib/actions/register";
 
 interface CredentialsFormProps {
   csrfToken?: string;
 }
 
-const prisma = new PrismaClient(); // Initialize Prisma Client
 
 export function CredentialsSignupForm(props: CredentialsFormProps) {
   const router = useRouter();
@@ -74,7 +71,7 @@ export function CredentialsSignupForm(props: CredentialsFormProps) {
 
   return (
     <form
-      className="w-full mt-8 text-xl text-black font-semibold flex flex-col"
+      className="w-full mt-8 text-xl text-black font-semibold flex flex-col "
       onSubmit={passwordVisible ? handlePasswordSubmit : handleEmailSubmit} // Conditional form submission
     >
       {error && (

@@ -2,21 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #171717;
-  --foreground: #ffffff;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #171717;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  color: var(--foreground);
-  background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -25,6 +11,8 @@ body {
     text-wrap: balance;
   }
 }
+
+
 
 @layer base {
   :root {
@@ -47,13 +35,14 @@ body {
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
+    --radius: 0.5rem;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -82,6 +71,8 @@ body {
   }
 }
 
+
+
 @layer base {
   * {
     @apply border-border;
@@ -107,3 +98,89 @@ body {
 
 }
 
+.wave {
+  --size: 50px;
+  --m: 0.5;
+  --p: calc(var(--m) * var(--size));
+  --R: calc(var(--size) * sqrt(var(--m) * var(--m) + 1));
+
+  background: linear-gradient(45deg, #6930c3, #5390d9);
+  mask:
+    radial-gradient(var(--R) at left 50% bottom calc(-1*var(--p)), #000 99%, #0000 101%) 
+      calc(50% - 2*var(--size)) 0/calc(4*var(--size)) 100%,
+    radial-gradient(var(--R) at left 50% top    calc(-1*var(--p)), #000 99%, #0000 101%) 
+      50% var(--size)/calc(4*var(--size)) 100%;
+  animation: wave-animation 10s linear infinite;
+}
+
+@keyframes wave-animation {
+  0% {
+    mask-position: calc(50% - 2*var(--size)) 0, 50% var(--size);
+  }
+  100% {
+    mask-position: calc(50% + 2*var(--size)) 0, 50% calc(-1*var(--size));
+  }
+}
+
+@keyframes move {
+  100% {
+      transform: translate3d(0, 0, 1px) rotate(360deg);
+  }
+}
+
+@keyframes floatUpDownAndSideways {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(calc(10vw), calc(25vh - 20vmin));
+  }
+  50% {
+    transform: translate(0, calc(100vh - 80vmin));
+  }
+  75% {
+    transform: translate(calc(-10vw), calc(25vh - 20vmin));
+  }
+}
+
+.background {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background: #222222;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.background span {
+  width: 120vmin;
+  height: 120vmin;
+  border-radius: 50%;
+  position: absolute;
+  filter: blur(60px);
+  opacity: 0.05;
+  animation: floatUpDownAndSideways 50s ease-in-out infinite;
+}
+
+.background span:nth-child(1) {
+  background-color: #78350f;  /* bg-orange-900 */
+  left: 10%;
+  animation-delay: -10s;
+  opacity: 0.08;
+}
+
+.background span:nth-child(2) {
+  background-color: #4c1d95;  /* bg-violet-900 */
+  right: 10%;
+  animation-delay: -20s;
+  opacity: 0.08;
+}
+
+/* Hide unused spans */
+.background span:nth-child(3),
+.background span:nth-child(4),
+.background span:nth-child(5) {
+  display: none;
+}
