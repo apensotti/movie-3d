@@ -1,3 +1,5 @@
+"use server"
+
 import { omdb } from "../../../../data/types";
 import MovieVideos, { MovieVideosProps } from "../../../../components/movie/MovieVideos";
 import PageNav from "../../../../components/movie/PageNav";

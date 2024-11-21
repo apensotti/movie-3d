@@ -54,7 +54,7 @@ const data = {
     },
     {
       title: "Nodes",
-      url: "/",
+      url: "/nodes",
       icon: PiGraphLight,
       iconColor: "/icons/Nodes.svg",
     },

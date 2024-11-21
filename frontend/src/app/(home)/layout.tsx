@@ -24,7 +24,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-        <body className={inter.className}>
+        <body className={`${inter.className} bg-neutral-900`}>
         <ThemeProvider attribute="class" defaultTheme="dark">
           <AuthProvider session={session}>
             <AI>                
@@ -45,20 +45,20 @@ export default async function RootLayout({
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col min-h-screen w-full">
-                    <div className="fixed top-0 left-0 right-0 h-16 flex items-center justify-center bg-neutral-900 z-10 no-scrollbar">
-                      <div className="absolute top-6 left-1/2 -translate-x-1/2">
-                        <SearchBar />
+                  <div className="flex flex-grow h-full w-full">
+                    <div className="flex-grow h-screen relative">
+                      <div className="flex justify-between items-center px-4 pt-4 md:pt-6">
+                        <HomeButton h={12}/>
+                        <div className="w-fit">
+                          <SearchBar />
+                        </div>
+                        <div className="flex-shrink-0">
+                          <LoginSignup />
+                        </div>
                       </div>
-                      <div className="absolute left-4 top-4">
-                        <HomeButton h={16}/>
+                      <div className="flex-grow">
+                        {children}
                       </div>
-                      <div className="absolute right-4 top-6">
-                        <LoginSignup />
-                      </div>
-                    </div>
-                    <div className="flex-grow pt-16">
-                      {children}
                     </div>
                   </div>
                 )}

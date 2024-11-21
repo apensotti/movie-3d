@@ -17,7 +17,7 @@ async function layout({children}: Readonly<{children: React.ReactNode;}>) {
       <ThemeProvider attribute="class" defaultTheme="dark">
         <AuthProvider session={session}>
           <div className='absolute top-4 left-4'>
-            <HomeButton h={16}/>
+            <HomeButton h={12}/>
           </div>
             {children}
         </AuthProvider>

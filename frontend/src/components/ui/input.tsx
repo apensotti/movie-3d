@@ -16,7 +16,7 @@ export interface InputProps
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, onArrowClick, isLoading, stop, ...props }, ref) => {
     return (
-      <div className="flex items-center">
+      <div className="flex items-center scale-150">
         <div className="relative flex-grow">
           <input
             type={type}

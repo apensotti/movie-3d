@@ -2,10 +2,15 @@ from ast import literal_eval
 import json
 import mysql.connector
 import re
+import random
+from datetime import datetime
 
 ## Data
 with open('data/movies.json', 'r') as f:
     movies = json.load(f)
+
+with open('data/365_movies.json', 'r') as f:
+    daily_movies = json.load(f)
 
 def get_movies():
     return movies
@@ -33,27 +38,30 @@ def generate_graph_data(ids: list[str]):
     nodes = []
     links = []
 
-    genres = get_genres(imdb_ids)
     movies = get_selected_movies(imdb_ids)
-    genre_to_movies = {genre: [] for genre in genres}
+    
+    # First collect all genres that have at least one movie
+    used_genres = set()
+    for movie in movies:
+        if 'genres' in movie and movie['genres']:
+            for genre in movie['genres']:
+                used_genres.add(genre)
 
-    for genre in genres:
+    # Only add genre nodes that will have connections
+    for genre in used_genres:
         node = {"id": genre, "title": genre, "size": 1}
         nodes.append(node)
 
+    # Add movie nodes and links
     for movie in movies:
         if 'genres' in movie and movie['genres']:
-            nodes.append({"id": str(movie['imdb_id']), "title": movie['title'], "size": movie['popularity']})
+            movie_id = str(movie['imdb_id'])
+            nodes.append({"id": movie_id, "title": movie['title'], "size": movie['popularity']})
             for genre in movie['genres']:
-                links.append({"source": genre, "target": str(movie['imdb_id'])})
-                genre_to_movies[genre].append(str(movie['imdb_id']))
-
-    for genre, ids in genre_to_movies.items():
-        for i in range(len(ids)):
-            for j in range(i + 1, len(ids)):
-                links.append({"source": ids[i], "target": ids[j]})
+                links.append({"source": genre, "target": movie_id})
 
     return {"nodes": nodes, "links": links}
+
 
 
 def search_movies_in_mysql(title='', keywords=[], cast=[], crew=[], date_range=[], vote_average={}, popularity={}, limit=0):
@@ -111,3 +119,11 @@ def search_movies_in_mysql(title='', keywords=[], cast=[], crew=[], date_range=[
 
     connection.close()
     return [result['imdb_id'] for result in results]
+
+
+def get_daily_movie():
+    today = datetime.now().strftime("%Y-%m-%d")
+    for movie in daily_movies:
+        if movie['date'] == today:
+            return movie['imdb_id']
+    return None

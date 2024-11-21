@@ -29,6 +29,9 @@ llm_embeddings = OpenAIEmbeddings(model='text-embedding-3-small')
 vdb = FAISS.load_local('data/description/', llm_embeddings, allow_dangerous_deserialization=True)
 recommendation_vdb = FAISS.load_local('data/recommendation/', llm_embeddings, allow_dangerous_deserialization=True)
 
+with open('data/movies.json', 'r') as file:
+    data_movies = json.load(file)
+
 #NLP
 def split_into_sentences(paragraph):
     sentences = re.split(r'(?<=[.!?]) +', paragraph.strip())
@@ -53,16 +56,37 @@ def faissvdb_recommendations(k):
     return retriever
 
 ## Faiss Vector Database
+import json
 def search_movies(query, k):
-    
     results = faissvdb(k).invoke(query)
 
-    movies = []
+    movie_ids = []        
+    movie_lookup = {movie['imdb_id']: movie for movie in data_movies}
+    
     for result in results:
-        movies.append(result.metadata)
+        movie_data = movie_lookup.get(result.metadata['imdb_id'])
+        if movie_data:
+            movie_ids.append(movie_data['imdb_id'])
+            
+            if movie_data.get('belongs_to_collection') and isinstance(movie_data['belongs_to_collection'], dict):
+                collection_id = movie_data['belongs_to_collection'].get('id')
+                if collection_id:
+                    collection_movie_ids = [
+                        movie['imdb_id'] for movie in data_movies
+                        if movie.get('belongs_to_collection') and 
+                        isinstance(movie['belongs_to_collection'], dict) and
+                        movie['belongs_to_collection'].get('id') == collection_id
+                    ]
+                    movie_ids.extend(collection_movie_ids)
 
-    sorted_movies = sorted(movies, key=lambda x: x['popularity'], reverse=True)
-    return sorted_movies
+    unique_ids = []
+    seen = set()
+    for movie_id in movie_ids:
+        if movie_id not in seen:
+            unique_ids.append(movie_id)
+            seen.add(movie_id)
+
+    return unique_ids
 
 
 def rag_chain():

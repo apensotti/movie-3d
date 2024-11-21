@@ -52,8 +52,8 @@ export function AverageRating({library}:{library?:omdb[]}) {
         <CardTitle className="text-sm">Average Rating</CardTitle>
         <CardDescription className="text-xs">IMDb Rating</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 pb-0 flex justify-center items-center">
-        {averageRating}/10
+      <CardContent className="flex-1 flex pb-8 justify-center items-center">
+        <div className="text-4xl font-bold">{averageRating}/10</div>
       </CardContent>
     </Card>
   )

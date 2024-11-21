@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from utils.common import generate_graph_data, get_movie, get_movies
+from utils.common import generate_graph_data, get_daily_movie, get_movie, get_movies
 
 router = APIRouter(prefix="/data", tags=["Data"])
 
@@ -14,3 +14,7 @@ def get_movies():
 @router.get("/get_movie/")
 def get_movie(imdb_id: str):
     return get_movie(imdb_id)
+
+@router.get("/get_daily_movie/")
+def daily_movie():
+    return get_daily_movie()

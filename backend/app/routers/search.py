@@ -14,8 +14,7 @@ class RangeFilter(BaseModel):
 @router.get("/similarity/")
 def search(query: str, k: int = 50):
     movies = search_movies(query, k)
-    ids = [movie['imdb_id'] for movie in movies]
-    return list(set(ids))
+    return list(movies)
 
 @router.get("/movies/")
 async def search_mysql(

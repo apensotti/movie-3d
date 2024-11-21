@@ -184,3 +184,29 @@ body {
 .background span:nth-child(5) {
   display: none;
 }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(23, 23, 23); /* neutral-900 */
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(64, 64, 64); /* neutral-700 */
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(82, 82, 82); /* neutral-600 */
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(64, 64, 64) rgb(23, 23, 23);
+}

@@ -35,7 +35,7 @@
     "frontend/src/app/layout.tsx",
     "frontend/src/app/page.tsx",
     "build/types/**/*.ts"
-  ],
+, "src/lib/auth/encryptPassword.js"  ],
   "exclude": [
     "node_modules"
   ]

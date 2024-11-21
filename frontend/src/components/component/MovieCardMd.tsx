@@ -15,20 +15,25 @@ import {
 
 interface MovieCardMdProps {
     movies: omdb[] | undefined;
+    usePagination?: boolean;
 }
 
-function MovieCardMd({ movies }: MovieCardMdProps) {
+function MovieCardMd({ movies, usePagination = true }: MovieCardMdProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentMovies, setCurrentMovies] = useState<omdb[]>([]);
   const moviesPerPage = 10;
 
   useEffect(() => {
     if (movies && movies.length > 0) {
-      const indexOfLastMovie = currentPage * moviesPerPage;
-      const indexOfFirstMovie = indexOfLastMovie - moviesPerPage;
-      setCurrentMovies(movies.slice(indexOfFirstMovie, indexOfLastMovie));
+      if (usePagination) {
+        const indexOfLastMovie = currentPage * moviesPerPage;
+        const indexOfFirstMovie = indexOfLastMovie - moviesPerPage;
+        setCurrentMovies(movies.slice(indexOfFirstMovie, indexOfLastMovie));
+      } else {
+        setCurrentMovies(movies);
+      }
     }
-  }, [currentPage, movies]);
+  }, [currentPage, movies, usePagination]);
 
   useEffect(() => {
     // Reset to first page when movies prop changes
@@ -43,7 +48,7 @@ function MovieCardMd({ movies }: MovieCardMdProps) {
 
   return (
     <div className='flex flex-col'>
-      {totalPages > 1 && (
+      {usePagination && totalPages > 1 && (
         <Pagination className='p-5'>
           <PaginationContent>
             <PaginationItem>

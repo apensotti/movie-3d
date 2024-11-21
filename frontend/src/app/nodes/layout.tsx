@@ -1,0 +1,42 @@
+import { Inter } from 'next/font/google';
+import '../globals.css';
+import HomeButton from '@/components/component/HomeButton';
+import AuthProvider from '@/components/auth/AuthProvider';
+import LoginSignupAvatar from '@/components/auth/LoginSignupAvatar';
+import { AI } from '@/components/ai/ai';
+import { auth } from '@/lib/auth/authConfig';
+import { AppSidebar } from '@/components/component/LibrarySidebar/app-sidebar';
+import { ThemeProvider } from '@/components/ui/theme-provider';
+import { ProfileDataProvider } from '@/components/component/ProfileDataProvider';
+
+const inter = Inter({ subsets: ['latin'] });
+
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const session = await auth()
+
+  return (
+    <html lang="en">
+        <body className={`${inter.className} bg-neutral-900`}>
+        <ThemeProvider attribute="class" defaultTheme="dark">
+          <AuthProvider session={session}>
+            <AI>                
+              <div className="flex h-screen w-full">                  
+                <AppSidebar user_session={session || undefined}/>
+                <main className="flex-1 overflow-hidden">
+                  {session?.user?.email && (
+                    <ProfileDataProvider email={session.user.email} />
+                  )}
+                  {children}
+                </main>
+              </div>
+            </AI>
+          </AuthProvider>
+        </ThemeProvider>
+        </body>
+    </html>
+  );
+}
